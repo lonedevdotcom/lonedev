@@ -1,0 +1,7 @@
+#summary An overview of how the game will work.
+
+= Introduction =
+
+Space hoops will be a fun space game where the goal is to fly your spaceship through large hoops in as quick a time as possible. There will be varying levels of difficulty.
+
+_ADD MORE DETAIL HERE AS THE GAME BECOMES CLEARER._
