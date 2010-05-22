@@ -5,6 +5,7 @@ import com.jme.bounding.BoundingBox;
 import com.jme.math.Vector3f;
 import com.jme.scene.Controller;
 import com.jme.scene.Spatial;
+import com.jme.scene.state.CullState;
 import com.jme.util.export.xml.XMLImporter;
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +21,8 @@ public class AssetViewer extends SimpleGame {
 
     public static void main(String[] args) {
         AssetViewer av = new AssetViewer();
-        av.samples = 0; // Smooths things out, but lowers the framerate
-        av.depthBits = 0;
+        av.samples = 4; // Smooths things out, but lowers the framerate
+        av.depthBits = 4;
         av.setConfigShowMode(ConfigShowMode.AlwaysShow);
         av.start();
     }
@@ -30,12 +31,7 @@ public class AssetViewer extends SimpleGame {
     protected void simpleInitGame() {
         loadModel(new File("artefacts/spacefighter01/spacefighter01-jme.xml"), Vector3f.ZERO, 1f);
         loadModel(new File("artefacts/spacefighter01/hoop-jme.xml"), Vector3f.ZERO, 1f);
-        loadModel(new File("artefacts/spacestation/spacestation-jme.xml"), new Vector3f(0, 0, -600), 2f);
-
-        Spatial spacestation = rootNode.getChild("spacestation");
-        Controller rotationController = new RotationController(spacestation, Vector3f.UNIT_Y);
-        rotationController.setSpeed(0.02f);
-        spacestation.addController(rotationController);
+        loadSpaceStation();
     }
 
     private void loadModel(File spatialFile, Vector3f translation, float scale) {
@@ -50,5 +46,20 @@ public class AssetViewer extends SimpleGame {
         } catch (IOException ex) {
             logger.severe("Unable to load spatial: " + ex);
         }
+    }
+
+    private void loadSpaceStation() {
+        loadModel(new File("artefacts/spacestation/spacestation-jme.xml"), new Vector3f(0, 0, -600), 2f);
+
+        Spatial spaceStation = rootNode.getChild("spacestation");
+        Controller rotationController = new RotationController(spaceStation, Vector3f.UNIT_Y);
+        rotationController.setSpeed(0.02f);
+        spaceStation.addController(rotationController);
+
+        // Adding a cull state to ignore the "back" side of the vertexes. This
+        // squeezes a bit more frame rate.
+//        CullState cs = display.getRenderer().createCullState();
+//        cs.setCullFace(CullState.Face.Back);
+//        spaceStation.setRenderState(cs);
     }
 }
