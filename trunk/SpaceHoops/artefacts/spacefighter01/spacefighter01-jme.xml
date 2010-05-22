@@ -16,7 +16,7 @@
         <com.jme.scene.state.TextureState>
           <texture>
             <com.jme.image.Texture2D apply="Replace" wrapS="Repeat" wrapT="Repeat" minificationFilter="Trilinear" magnificationFilter="Bilinear">
-              <textureKey class="com.jme.util.TextureKey" file="F01_512.JPG" protocol="file"/>
+              <textureKey class="com.jme.util.TextureKey" file="F01_512.jpg" protocol="file"/>
             </com.jme.image.Texture2D>
           </texture>
         </com.jme.scene.state.TextureState>

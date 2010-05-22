@@ -29,14 +29,14 @@ public class AssetViewer extends SimpleGame {
 
     @Override
     protected void simpleInitGame() {
-        loadModel(new File("artefacts/spacefighter01/spacefighter01-jme.xml"), Vector3f.ZERO, 1f);
-        loadModel(new File("artefacts/spacefighter01/hoop-jme.xml"), Vector3f.ZERO, 1f);
+        loadModel("/artefacts/spacefighter01/spacefighter01-jme.xml", Vector3f.ZERO, 1f);
+        loadModel("/artefacts/spacefighter01/hoop-jme.xml", Vector3f.ZERO, 1f);
         loadSpaceStation();
     }
 
-    private void loadModel(File spatialFile, Vector3f translation, float scale) {
+    private void loadModel(String spatialURL, Vector3f translation, float scale) {
         try {
-            Spatial model = (Spatial) xmlImporter.load(spatialFile);
+            Spatial model = (Spatial) xmlImporter.load(this.getClass().getResource(spatialURL));
             model.setLocalScale(scale);
             model.setModelBound(new BoundingBox());
             model.updateModelBound();
@@ -49,7 +49,7 @@ public class AssetViewer extends SimpleGame {
     }
 
     private void loadSpaceStation() {
-        loadModel(new File("artefacts/spacestation/spacestation-jme.xml"), new Vector3f(0, 0, -600), 2f);
+        loadModel("/artefacts/spacestation/spacestation-jme.xml", new Vector3f(0, 0, -600), 2f);
 
         Spatial spaceStation = rootNode.getChild("spacestation");
         Controller rotationController = new RotationController(spaceStation, Vector3f.UNIT_Y);
@@ -57,9 +57,9 @@ public class AssetViewer extends SimpleGame {
         spaceStation.addController(rotationController);
 
         // Adding a cull state to ignore the "back" side of the vertexes. This
-        // squeezes a bit more frame rate.
-//        CullState cs = display.getRenderer().createCullState();
-//        cs.setCullFace(CullState.Face.Back);
-//        spaceStation.setRenderState(cs);
+        // squeezes a slightly better frame rate :)
+        CullState cs = display.getRenderer().createCullState();
+        cs.setCullFace(CullState.Face.Back);
+        spaceStation.setRenderState(cs);
     }
 }
