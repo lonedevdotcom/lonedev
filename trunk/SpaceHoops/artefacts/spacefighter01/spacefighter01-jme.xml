@@ -6,7 +6,7 @@
 
 <com.jme.scene.Node name="fighter01">
   <children>
-    <com.jme.scene.TriMesh name="ff01_21">
+    <com.jme.scene.TriMesh name="fighter01-TriMesh">
       <renderStateList>
         <com.jme.scene.state.MaterialState id="21" shininess="96.0" materialFace="FrontAndBack">
           <diffuse r="0.498" g="0.498" b="0.498" a="1.0"/>
