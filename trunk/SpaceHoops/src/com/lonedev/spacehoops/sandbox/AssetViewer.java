@@ -21,15 +21,15 @@ public class AssetViewer extends SimpleGame {
 
     public static void main(String[] args) {
         AssetViewer av = new AssetViewer();
-        av.samples = 4; // Smooths things out, but lowers the framerate
-        av.depthBits = 4;
+        av.samples = 0; // Smooths things out, but lowers the framerate
+        av.depthBits = 0;
         av.setConfigShowMode(ConfigShowMode.AlwaysShow);
         av.start();
     }
 
     @Override
     protected void simpleInitGame() {
-        loadModel("/artefacts/spacefighter01/spacefighter01-jme.xml", Vector3f.ZERO, 1f);
+        loadSpaceShip();
         loadModel("/artefacts/spacefighter01/hoop-jme.xml", Vector3f.ZERO, 1f);
         loadSpaceStation();
     }
@@ -46,6 +46,10 @@ public class AssetViewer extends SimpleGame {
         } catch (IOException ex) {
             logger.severe("Unable to load spatial: " + ex);
         }
+    }
+
+    private void loadSpaceShip() {
+        loadModel("/artefacts/spacefighter01/spacefighter01-jme.xml", Vector3f.ZERO, 1f);
     }
 
     private void loadSpaceStation() {
