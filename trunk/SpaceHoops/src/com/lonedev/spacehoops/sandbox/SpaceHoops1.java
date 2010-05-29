@@ -8,26 +8,25 @@ import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Controller;
+import com.jme.scene.Geometry;
 import com.jme.scene.Node;
 import com.jme.scene.Skybox;
 import com.jme.scene.Spatial;
-import com.jme.scene.TexCoords;
 import com.jme.scene.shape.Quad;
 import com.jme.scene.state.BlendState;
 import com.jme.scene.state.CullState;
-import com.jme.scene.state.LightState;
-import com.jme.scene.state.MaterialState;
 import com.jme.scene.state.TextureState;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
 import com.jme.util.export.xml.XMLImporter;
-import com.jme.util.geom.BufferUtils;
+import com.jmex.font2d.Font2D;
+import com.jmex.font2d.Text2D;
 import com.jmex.game.StandardGame;
 import com.jmex.game.state.BasicGameState;
 import com.jmex.game.state.GameState;
 import com.jmex.game.state.GameStateManager;
+import com.sceneworker.SceneWorker;
 import java.io.IOException;
-import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -43,14 +42,14 @@ public class SpaceHoops1 extends BasicGameState {
     private Skybox skybox;
 
     private Node hudNode;
-    private int hudTextureWidth, hudTextureHeight;
+//    private int hudTextureWidth, hudTextureHeight;
 
     public static void main(String[] args) {
         StandardGame standardGame = new StandardGame("GameControl", StandardGame.GameType.GRAPHICAL, null);
         standardGame.getSettings().setSamples(0);
-        standardGame.getSettings().setWidth(1024);
-        standardGame.getSettings().setHeight(600);
-        standardGame.getSettings().setFullscreen(true);
+        standardGame.getSettings().setWidth(640);
+        standardGame.getSettings().setHeight(480);
+        standardGame.getSettings().setFullscreen(false);
 
         standardGame.start();
 
@@ -73,7 +72,10 @@ public class SpaceHoops1 extends BasicGameState {
         loadSpaceStation();
 //        testDrawOrtho();
         testHudTutorial();
-        
+        testText();
+
+        SceneWorker.inst().initialiseSceneWorkerAndMonitor();
+        SceneMonitor.getMonitor().registerNode(rootNode, "root");
 //        SceneMonitor.getMonitor().registerNode(rootNode, "Root Node");
 //        SceneMonitor.getMonitor().showViewer(true);
     }
@@ -137,23 +139,24 @@ public class SpaceHoops1 extends BasicGameState {
         skybox.setLocalTranslation(chaseCamera.getCamera().getLocation());
         skybox.updateRenderState();
 
-//        SceneMonitor.getMonitor().updateViewer(tpf);
-        hudNode.updateRenderState();
+        SceneMonitor.getMonitor().updateViewer(tpf);
+
+//        rootNode.getChild("Text node").updateRenderState();
     }
 
     @Override
     public void render(float tpf) {
         super.render(tpf);
-//        SceneMonitor.getMonitor().renderViewer(DisplaySystem.getDisplaySystem().getRenderer());
+        SceneMonitor.getMonitor().renderViewer(DisplaySystem.getDisplaySystem().getRenderer());
     }
 
-    public float getUForPixel(int xPixel) {
-        return (float) xPixel / hudTextureWidth;
-    }
-
-    public float getVForPixel(int yPixel) {
-        return 1f - (float) yPixel / hudTextureHeight;
-    }
+//    public float getUForPixel(int xPixel) {
+//        return (float) xPixel / hudTextureWidth;
+//    }
+//
+//    public float getVForPixel(int yPixel) {
+//        return 1f - (float) yPixel / hudTextureHeight;
+//    }
 
     private void testHudTutorial() {
         DisplaySystem display = DisplaySystem.getDisplaySystem();
@@ -162,10 +165,16 @@ public class SpaceHoops1 extends BasicGameState {
         hudNode.setRenderQueueMode(Renderer.QUEUE_ORTHO);
         hudNode.setLocalTranslation(new Vector3f((float)display.getWidth() / 2f, 40, 0f));
 
-        Quad hudQuad = new Quad("Ortho Q1", 64f, 64f);
-//        hudQuad.setLocalScale(2f);
-//        hudQuad.setLocalTranslation(new Vector3f(300f, 220f, 0f));
-//        hudQuad.setZOrder(0);
+        Quad hudQuad = new Quad("HUD quad", 64f, 64f);
+//        hudQuad.setZOrder(1);
+//        hudQuad.setDefaultColor(ColorRGBA.white.clone());
+
+        // This next line is all important for setting the alpha/opacity of the
+        // quad. Now I don't know whether to use MaterialState (diffuse) for
+        // setting alpha, or whether to use this setSolidColor. More fiddling
+        // required!
+        hudQuad.setSolidColor(new ColorRGBA(1f,1f,1f,0.5f));
+
         hudQuad.setLightCombineMode(Spatial.LightCombineMode.Off);
 
         // create the texture state to handle the texture
@@ -181,11 +190,12 @@ public class SpaceHoops1 extends BasicGameState {
 
         // initialize texture width
 //        hudTextureWidth = ts.getTexture().getImage().getWidth();
-        hudTextureWidth = texture.getImage().getWidth();
+//        hudTextureWidth = texture.getImage().getWidth();
         // initialize texture height
 //        hudTextureHeight = ts.getTexture().getImage().getHeight();
-        hudTextureHeight = texture.getImage().getHeight();
+//        hudTextureHeight = texture.getImage().getHeight();
         // activate the texture state
+
         ts.setEnabled(true);
 
 //        // correct texture application:
@@ -207,19 +217,22 @@ public class SpaceHoops1 extends BasicGameState {
         // I was hoping to create some alpha blending using a MaterialState and/or
         // a LightState. However, the below render states are not making any
         // difference.
-        MaterialState hudMaterialState = display.getRenderer().createMaterialState();
-        hudMaterialState.setEnabled(true);
-        hudMaterialState.setDiffuse(new ColorRGBA(1, 0, 0, .5f));
+//        MaterialState hudMaterialState = display.getRenderer().createMaterialState();
+//        hudMaterialState.setEnabled(true);
+//        hudMaterialState.setDiffuse(new ColorRGBA(1, 0, 0, .5f));
 //        hudMaterialState.setAmbient(new ColorRGBA(1, 0, 0, .5f));
 //        hudMaterialState.setEmissive(new ColorRGBA(1, 0, 0, .5f));
 //        hudMaterialState.setSpecular(new ColorRGBA(1, 0, 0, .5f));
 //        hudMaterialState.setShininess(128);
-        hudNode.setRenderState(hudMaterialState);
+//        hudNode.setRenderState(hudMaterialState);
 
 //        LightState hudLightState = display.getRenderer().createLightState();
 //        hudLightState.setEnabled(true);
 //        hudNode.setRenderState(hudLightState);
 
+        // Of course, the BlendState is needed to allow the transparency piece.
+        // Turns out it's all you need if you use the "setSolidColor(...)" on
+        // the quad.
         BlendState hudBlendState = display.getRenderer().createBlendState();
         hudBlendState.setEnabled(true);
         hudBlendState.setTestEnabled(true);
@@ -231,6 +244,7 @@ public class SpaceHoops1 extends BasicGameState {
 
         hudNode.attachChild(hudQuad);
         rootNode.attachChild(hudNode);
+        hudNode.updateRenderState();
     }
 
     public static Logger getLogger() {
@@ -261,6 +275,19 @@ public class SpaceHoops1 extends BasicGameState {
         skybox.setTexture(Skybox.Face.Down, skyboxTextureDown);
 
         rootNode.attachChildAt(skybox, 0);
+    }
+
+    private void testText() {
+        Text2D t2d = new Text2D(new Font2D(), "TEST :-)", 10, 0);
+        t2d.setRenderQueueMode(Renderer.QUEUE_ORTHO);
+        t2d.setDefaultColor(new ColorRGBA(1f, 1f, 0f, 1f));
+        t2d.setLocalTranslation(200, 200, 0);
+        t2d.setLightCombineMode(Spatial.LightCombineMode.Off);
+        t2d.setRenderState(Text2D.getFontBlend());
+        t2d.updateRenderState();
+
+        rootNode.attachChild(t2d);
+        rootNode.updateRenderState();
     }
 
 
