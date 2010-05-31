@@ -55,10 +55,11 @@ public class SpaceHoops1 extends BasicGameState {
 
     public static void main(String[] args) {
         StandardGame standardGame = new StandardGame("GameControl", StandardGame.GameType.GRAPHICAL, null);
-        standardGame.getSettings().setSamples(0);
-        standardGame.getSettings().setWidth(640);
-        standardGame.getSettings().setHeight(480);
-        standardGame.getSettings().setFullscreen(false);
+        standardGame.getSettings().setSamples(4);
+        standardGame.getSettings().setDepth(32);
+        standardGame.getSettings().setWidth(1280);
+        standardGame.getSettings().setHeight(800);
+        standardGame.getSettings().setFullscreen(true);
 
         standardGame.start();
 
@@ -75,7 +76,7 @@ public class SpaceHoops1 extends BasicGameState {
     }
 
     protected void init() {
-//        createSkybox();
+        createSkybox();
         loadSpaceShip();
 //        loadModel("/artefacts/spacefighter01/hoop-jme.xml", Vector3f.ZERO, 1f);
         loadSpaceStation();
@@ -148,15 +149,15 @@ public class SpaceHoops1 extends BasicGameState {
         chaseCamera.update(tpf);
 
         //we want to keep the skybox around our eyes, so move it with the camera.
-//        skybox.setLocalTranslation(chaseCamera.getCamera().getLocation());
-//        skybox.updateRenderState();
+        skybox.setLocalTranslation(chaseCamera.getCamera().getLocation());
+        skybox.updateRenderState();
 
         SceneMonitor.getMonitor().updateViewer(tpf);
 
         if (frameCount++ % 200 == 0) {
             Spatial fighter = rootNode.getChild("fighter01");
             float[] angles = fighter.getLocalRotation().toAngles(null);
-            txt.setText(""+fighter.getLocalTranslation()+"\nyaw(x)="+angles[0]+ " roll(y)="+angles[1]+" pitch(z)="+angles[2]);
+            txt.setText(""+fighter.getLocalTranslation()+"\nyaw(x)="+angles[0]+ " roll(y)="+angles[1]+" pitch(z)="+angles[2]+"\nfps="+(1f/tpf));
             txt.update();
         }
 //        rootNode.getChild("Text node").updateRenderState();
@@ -255,9 +256,9 @@ public class SpaceHoops1 extends BasicGameState {
         hudBlendState.setEnabled(true);
         hudBlendState.setTestEnabled(true);
         hudBlendState.setBlendEnabled(true);
-        hudBlendState.setSourceFunction(BlendState.SourceFunction.SourceAlpha);
-        hudBlendState.setDestinationFunction(BlendState.DestinationFunction.OneMinusSourceAlpha);
-        hudBlendState.setBlendEquation(BlendState.BlendEquation.Subtract);
+//        hudBlendState.setSourceFunction(BlendState.SourceFunction.SourceAlpha);
+//        hudBlendState.setDestinationFunction(BlendState.DestinationFunction.OneMinusSourceAlpha);
+//        hudBlendState.setBlendEquation(BlendState.BlendEquation.Subtract);
         hudNode.setRenderState(hudBlendState);
 
         hudNode.attachChild(hudQuad);
