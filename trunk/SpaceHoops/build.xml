@@ -71,10 +71,20 @@
     nbproject/build-impl.xml file. 
 
     -->
+
+
+    <target name="-post-clean">
+        <delete dir="gen" failonerror="false"/>
+    </target>
+
+    <target name="-post-init">
+        <mkdir dir="gen"/>
+    </target>
+
     <target name="-pre-compile">
-        <delete file="lib/artefacts.zip" failonerror="false"/>
+        <!-- <delete file="gen/artefacts.zip" failonerror="false"/> -->
         
-        <zip destfile="lib/artefacts.zip" update="true" >
+        <zip destfile="gen/artefacts.zip" update="true" >
             <zipfileset dir="artefacts" prefix="artefacts"/>
         </zip>
     </target>
