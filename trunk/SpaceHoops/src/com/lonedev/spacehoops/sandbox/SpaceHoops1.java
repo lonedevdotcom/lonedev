@@ -4,14 +4,15 @@ import com.acarter.scenemonitor.SceneMonitor;
 import com.jme.bounding.BoundingBox;
 import com.jme.image.Texture;
 import com.jme.input.ChaseCamera;
+import com.jmex.angelfont.Rectangle;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Controller;
-import com.jme.scene.Geometry;
 import com.jme.scene.Node;
 import com.jme.scene.Skybox;
 import com.jme.scene.Spatial;
+import com.jme.scene.Spatial.CullHint;
 import com.jme.scene.shape.Quad;
 import com.jme.scene.state.BlendState;
 import com.jme.scene.state.CullState;
@@ -19,6 +20,9 @@ import com.jme.scene.state.TextureState;
 import com.jme.system.DisplaySystem;
 import com.jme.util.TextureManager;
 import com.jme.util.export.xml.XMLImporter;
+import com.jmex.angelfont.BitmapFont;
+import com.jmex.angelfont.BitmapFontLoader;
+import com.jmex.angelfont.BitmapText;
 import com.jmex.font2d.Font2D;
 import com.jmex.font2d.Text2D;
 import com.jmex.game.StandardGame;
@@ -26,7 +30,10 @@ import com.jmex.game.state.BasicGameState;
 import com.jmex.game.state.GameState;
 import com.jmex.game.state.GameStateManager;
 import com.sceneworker.SceneWorker;
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -43,6 +50,8 @@ public class SpaceHoops1 extends BasicGameState {
 
     private Node hudNode;
 //    private int hudTextureWidth, hudTextureHeight;
+
+    private BitmapText txt;
 
     public static void main(String[] args) {
         StandardGame standardGame = new StandardGame("GameControl", StandardGame.GameType.GRAPHICAL, null);
@@ -66,13 +75,14 @@ public class SpaceHoops1 extends BasicGameState {
     }
 
     protected void init() {
-        createSkybox();
+//        createSkybox();
         loadSpaceShip();
 //        loadModel("/artefacts/spacefighter01/hoop-jme.xml", Vector3f.ZERO, 1f);
         loadSpaceStation();
 //        testDrawOrtho();
         testHudTutorial();
-        testText();
+//        testText();
+        testBitmapFont();
 
         SceneWorker.inst().initialiseSceneWorkerAndMonitor();
         SceneMonitor.getMonitor().registerNode(rootNode, "root");
@@ -127,7 +137,9 @@ public class SpaceHoops1 extends BasicGameState {
         spaceStation.setRenderState(cs);
     }
 
-    
+
+    private int frameCount = 0;
+
     @Override
     public void update(float tpf) {
         super.update(tpf);
@@ -136,11 +148,17 @@ public class SpaceHoops1 extends BasicGameState {
         chaseCamera.update(tpf);
 
         //we want to keep the skybox around our eyes, so move it with the camera.
-        skybox.setLocalTranslation(chaseCamera.getCamera().getLocation());
-        skybox.updateRenderState();
+//        skybox.setLocalTranslation(chaseCamera.getCamera().getLocation());
+//        skybox.updateRenderState();
 
         SceneMonitor.getMonitor().updateViewer(tpf);
 
+        if (frameCount++ % 200 == 0) {
+            Spatial fighter = rootNode.getChild("fighter01");
+            float[] angles = fighter.getLocalRotation().toAngles(null);
+            txt.setText(""+fighter.getLocalTranslation()+"\nyaw(x)="+angles[0]+ " roll(y)="+angles[1]+" pitch(z)="+angles[2]);
+            txt.update();
+        }
 //        rootNode.getChild("Text node").updateRenderState();
     }
 
@@ -279,8 +297,9 @@ public class SpaceHoops1 extends BasicGameState {
 
     private void testText() {
         Text2D t2d = new Text2D(new Font2D(), "TEST :-)", 10, 0);
-        t2d.setRenderQueueMode(Renderer.QUEUE_ORTHO);
+//        t2d.setRenderQueueMode(Renderer.QUEUE_ORTHO);
         t2d.setDefaultColor(new ColorRGBA(1f, 1f, 0f, 1f));
+        t2d.setSolidColor(ColorRGBA.blue.clone());
         t2d.setLocalTranslation(200, 200, 0);
         t2d.setLightCombineMode(Spatial.LightCombineMode.Off);
         t2d.setRenderState(Text2D.getFontBlend());
@@ -288,6 +307,37 @@ public class SpaceHoops1 extends BasicGameState {
 
         rootNode.attachChild(t2d);
         rootNode.updateRenderState();
+    }
+
+    private void testBitmapFont() {
+        URL fontURL = this.getClass().getResource("/artefacts/fonts/arial14.fnt");
+        URL textureURL = this.getClass().getResource("/artefacts/fonts/arial14_0.png");
+
+        BitmapFont fnt = null;
+
+        try {
+            fnt = BitmapFontLoader.load(fontURL, textureURL);
+        } catch (Exception ex) {
+            System.err.println("Unable to load font: " + ex);
+            fnt = BitmapFontLoader.loadDefaultFont();
+        }
+
+        txt = new BitmapText(fnt, false);
+        txt.setBox(new Rectangle(0, 0, 600, 100));
+        txt.setSize(14);
+
+        // Setting the text to green, and alpha so it blends a bit with the background
+        txt.setDefaultColor(new ColorRGBA(0f, 1f, 0f, 0.75f));
+
+        txt.setText("Richard Hawkes is really cool, very cool in fact!");
+        txt.update();
+
+        Node orthoNode = new Node("Ortho Node for Fonts");
+
+        orthoNode.setLocalTranslation(10, 470, 0);
+        orthoNode.setCullHint(CullHint.Never);
+        orthoNode.attachChild(txt);
+        rootNode.attachChild(orthoNode);
     }
 
 
