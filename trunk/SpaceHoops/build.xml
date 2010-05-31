@@ -72,7 +72,9 @@
 
     -->
     <target name="-pre-compile">
-        <zip destfile="lib/artefacts.zip" update="true">
+        <delete file="lib/artefacts.zip" failonerror="false"/>
+        
+        <zip destfile="lib/artefacts.zip" update="true" >
             <zipfileset dir="artefacts" prefix="artefacts"/>
         </zip>
     </target>
