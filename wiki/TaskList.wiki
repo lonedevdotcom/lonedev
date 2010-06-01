@@ -9,6 +9,7 @@
   * Proof-of-concept HUD textures (with alpha).
   * Proof-of-concept HUD text (fonts).
 
+
 ==Outstanding==
   * Decent camera tracking.
   * Better spaceship movement. Currently it might be too easy.
