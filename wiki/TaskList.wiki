@@ -9,7 +9,6 @@
   * Proof-of-concept HUD textures (with alpha).
   * Proof-of-concept HUD text (fonts).
 
-
 ==Outstanding==
   * Decent camera tracking.
   * Better spaceship movement. Currently it might be too easy.
@@ -17,6 +16,6 @@
   * Speed control.
   * General collision logic (ie hoop orders, did they touch the hoop etc).
   * Main menu.
-  * GameState switching.
+  * !GameState switching.
   * Start/end hoops in Blender.
   * HUD guidance system for current/next hoop.
