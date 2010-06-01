@@ -1,9 +1,6 @@
 #summary Completed and to-do's
 #labels Featured,Phase-Design
 
-= Introduction =
-This Wiki will show work completed, and work left to do.
-
 ==Completed==
   * Models created in Blender (spaceship, space station, and hoops). Can be found in "artefacts" sub-directory.
   * Skybox implemented.
@@ -12,7 +9,7 @@ This Wiki will show work completed, and work left to do.
   * Proof-of-concept HUD textures (with alpha).
   * Proof-of-concept HUD text (fonts).
 
-==Outstanding
+==Outstanding==
   * Decent camera tracking.
   * Better spaceship movement. Currently it might be too easy.
   * Hoop placement.
