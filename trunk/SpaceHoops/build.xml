@@ -75,10 +75,12 @@
 
     <target name="-post-clean">
         <delete dir="gen" failonerror="false"/>
+        <delete dir="deploy" failonerror="false"/>
     </target>
 
     <target name="-post-init">
         <mkdir dir="gen"/>
+        <mkdir dir="deploy"/>
     </target>
 
     <target name="-pre-compile">
@@ -87,5 +89,9 @@
         <zip destfile="gen/artefacts.zip" update="true" >
             <zipfileset dir="artefacts" prefix="artefacts"/>
         </zip>
+    </target>
+
+    <target name="deploy" depends="jar">
+        <zip basedir="dist" destfile="deploy/release-${ENV.BUILD_NUMBER}.zip" update="true"/>
     </target>
 </project>
