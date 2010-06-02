@@ -10,6 +10,8 @@
 <project name="SpaceHoops" default="default" basedir=".">
     <description>Builds, tests, and runs the project SpaceHoops.</description>
     <import file="nbproject/build-impl.xml"/>
+    <taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" classpath="C:/Users/Richard/Downloads/ant-googlecode-0.0.2.jar" name="gcupload"/>
+    
     <!--
 
     There exist several targets which are by default empty and which can be 
@@ -80,7 +82,6 @@
 
     <target name="-post-init">
         <mkdir dir="gen"/>
-        <mkdir dir="deploy"/>
     </target>
 
     <target name="-pre-compile">
@@ -91,7 +92,23 @@
         </zip>
     </target>
 
+    <!--
+        This target is intended for use by my Hudson build engine. So please
+        ignore this!
+    -->
     <target name="deploy" depends="jar">
-        <zip basedir="dist" destfile="deploy/release-${ENV.BUILD_NUMBER}.zip" update="true"/>
+        <mkdir dir="deploy"/>
+        <zip basedir="dist" destfile="deploy/release-${env.BUILD_NUMBER}.zip" update="true"/>
+        <echo message="WORKSPACE=${env.WORKSPACE}"/>
+        <gcupload
+            username="${gc.username}"
+            password="${gc.password}"
+            projectname="lonedev"
+            filename="${env.WORKSPACE}/SpaceHoops/deploy/release-${env.BUILD_NUMBER}.zip"
+            targetfilename="release-${env.BUILD_NUMBER}.zip"
+            summary="Automated Hudson Build (${env.BUILD_NUMBER})"
+        />
     </target>
+
+
 </project>
