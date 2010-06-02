@@ -97,9 +97,11 @@
         ignore this!
     -->
     <target name="deploy" depends="jar">
+        <property environment="env" />
+
         <mkdir dir="deploy"/>
         <zip basedir="dist" destfile="deploy/release-${env.BUILD_NUMBER}.zip" update="true"/>
-        <echo message="WORKSPACE=${env.WORKSPACE}"/>
+        <echo message="WORKSPACE=${env.WORKSPACE} username=${gc.username}"/>
         <gcupload
             username="${gc.username}"
             password="${gc.password}"
