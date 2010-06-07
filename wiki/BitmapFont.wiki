@@ -1,10 +1,13 @@
 #summary How to add any font you like to your JME game!
+#labels Featured
 
-=How to create Bitmap Fonts=
+=How to Display Bitmap Fonts in JME=
 JMonkeyEngine now allows you to display any font you wish in your game. How? Well it requires a few preliminary steps to prepare the font file and texture file, and then it's pretty plain sailing. Follow this tutorial and you'll see! Please note this tutorial is pretty much exclusively for Windows users. If you have a Mac (or dare I say using Linux?) you might want to find yourself a Windows PC to get steps 1-3 completed.
+
 
 ==Step 1 - Choose your font.==
 You could just pick Arial, but why not take a trip to http://www.1001freefonts.com and find a font you fancy playing around with. For this tutorial, I am going to use "Battlefield" (http://www.1001freefonts.com/Battlefield.php). Click the "Windows Download" icon and save the zip file to your PC.
+
 
 ==Step 2 - Install the font.==
 In a few moments time, we're going to be using a free app called "Bitmap Font Generator". In order to output our font and texture file, the font must be "installed" on your machine. Follow these steps:
@@ -18,6 +21,7 @@ In a few moments time, we're going to be using a free app called "Bitmap Font Ge
 Well done. Font installed!
 
 Please bear in mind that these fonts are free for non-commercial use. If you want to consider a commercial license, you can download 10,000 fonts for $20 here: http://www.ultimatefontdownload.com/
+
 
 ==Step 3 - Creating the font and texture file.==
 JME needs a font file and a texture file. The texture file is an image with all the characters of the font. The font file itself contains the mapping of where each charater is in the file.
@@ -52,6 +56,7 @@ The tool we're going to use to do this is the (creatively named) Bitmap font gen
 Having saved the file, go and have a look at the "battlefield16.fnt" file in Notepad/Textpad. Also take a look at the generated "battlefield16_0.png" file. Hopefully you can get an idea of what is going on here. JME can use the ".fnt" file to work out where to map each character of the ".png" file on to the screen.
 
 Great. Finally we can dive in to some JME to get this all working.
+
 
 ==Step 4 - Putting it together in JME.==
 OK, I'm going to just dump the code below, and talk you through it further down. Have a quick skim through and see what you think.
