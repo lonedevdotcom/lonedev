@@ -50,6 +50,7 @@ The tool we're going to use to do this is the (creatively named) Bitmap font gen
 <img src="http://farm5.static.flickr.com/4024/4679596649_496806865d_b.jpg" width="288" height="567" alt="bm-image2" />
 
   * Click "OK"
+  * Select the top 4 font sets (on the right hand side). These will be the characters that will be put on in to the texture image. If you're thinking of creating international characters, you might want to investigate fonts that can cater for this. If you select a lot of characters, you'll probably need to increase the width/height of the output image (which you currently have as 512x512).
 	
   * Now create the font file and texture. Select "Options -> Save bitmap font as". Save the file as "Battlefield16.fnt" in a folder that you can easily remember. I reccomend creating a new one so you can clearly see what's going on.
   
