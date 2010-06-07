@@ -31,8 +31,8 @@ The tool we're going to use to do this is the (creatively named) Bitmap font gen
     * Height: 100%
     * Font smoothing: Checked
     * All other checkboxes: Unchecked.
-	
-	bm-image1.png
+
+<img src="http://farm5.static.flickr.com/4006/4679596699_325251e86f.jpg" width="290" height="409" alt="bm-image1" />
 	
   * Click "OK".
 	
@@ -43,7 +43,7 @@ The tool we're going to use to do this is the (creatively named) Bitmap font gen
     * Font descriptor: Text
     * Textures: png
 	
-bm-image2.png
+<img src="http://farm5.static.flickr.com/4024/4679596649_496806865d_b.jpg" width="288" height="567" alt="bm-image2" />
 
   * Click "OK"
 	
@@ -146,6 +146,6 @@ Finally, we add this text to an "ORTHO" queue. This means (as far as I know so f
 
 Hooray, we're there. With any luck, you should now be able to run this and see the text on the screen.
 
-jme-image1.png
+<img src="http://farm2.static.flickr.com/1300/4680228586_cf687e1d31_b.jpg" width="646" height="512" alt="jme-image1" />
 
 Have fun!
