@@ -51,7 +51,9 @@ The tool we're going to use to do this is the (creatively named) Bitmap font gen
 
   * Click "OK"
   * Select the top 4 font sets (on the right hand side). These will be the characters that will be put on in to the texture image. If you're thinking of creating international characters, you might want to investigate fonts that can cater for this. If you select a lot of characters, you'll probably need to increase the width/height of the output image (which you currently have as 512x512).
-	
+
+<img src="http://farm5.static.flickr.com/4012/4681069669_76affb91ed_b.jpg" width="762" height="512" alt="bm-image3" />
+
   * Now create the font file and texture. Select "Options -> Save bitmap font as". Save the file as "Battlefield16.fnt" in a folder that you can easily remember. I reccomend creating a new one so you can clearly see what's going on.
   
 Having saved the file, go and have a look at the "battlefield16.fnt" file in Notepad/Textpad. Also take a look at the generated "battlefield16_0.png" file. Hopefully you can get an idea of what is going on here. JME can use the ".fnt" file to work out where to map each character of the ".png" file on to the screen.
