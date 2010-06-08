@@ -15,13 +15,14 @@ In a few moments time, we're going to be using a free app called "Bitmap Font Ge
   * Select File -> Install New Font
   * In the box at the bottom, navigate to the folder that contains the unzipped Battlefield font.
   * The fonts should now appear in the "List of fonts" dialog. Select just the "Battlefield (!TrueType)" font for now.
+  * Click "OK".
 
 Well done. Font installed!
 
 *IMPORTANT:* Please bear in mind that these fonts are free for non-commercial use. If you want to consider a commercial license, you can download 10,000 fonts for $20 here: http://www.ultimatefontdownload.com/
 ----
 ==Step 3 - Creating the font and texture file.==
-JME needs a font file and a texture file. The texture file is an image with all the characters of the font. The font file itself contains the mapping of where each charater is in the file.
+JME needs a font file and a texture file. The texture file is an image with all the characters of the font. The font file itself contains the mapping of where each charater is in the image.
 
 The tool we're going to use to do this is the (creatively named) Bitmap font generator (http://www.angelcode.com/products/bmfont). Download and install the latest version. Start it up and follow these steps:
 
@@ -31,15 +32,15 @@ The tool we're going to use to do this is the (creatively named) Bitmap font gen
     * Size: 16
     * Height: 100%
     * Font smoothing: Checked
-    * All other checkboxes: Unchecked.
+    * All other checkboxes: Unchecked
 
 <img src="http://farm5.static.flickr.com/4006/4679596699_325251e86f.jpg" width="290" height="409" alt="bm-image1" />
 	
-  * Click "OK".
+  * Click "OK"
   * Select "Export Options" (T). Settings:
     * Width/Height: Both 512 (This is the size of the image being created)
     * Bit depth: 32 (Haven't tried 8, so going with what I know!)
-    * Presets: White text with alpha (this will update the values above)
+    * Presets: White text with alpha (this will update the values above).
     * Font descriptor: Text (This is the format that JME uses)
     * Textures: png (You can use TGA if you wish, but the file is much larger, and I couldn't see any real performance benefit)
 	
@@ -129,26 +130,28 @@ public class BitmapFontExample extends SimpleGame {
     }
 }
 }}}
-A lot there. It's the "testBitmapFont()" that I will talk you through.
+A lot there. It's the `testBitmapFont()` that I will talk you through.
 
-The fontFile and textureFile will be the files you saved earlier. Be sure to update the directory to the directory where you installed your font/texture.
+The `fontFile` and `textureFile` will be the files you saved earlier. Be sure to update the directory to the directory where you installed your font/texture.
 
-Next we create a !BitmapFont instance and use the !BitmapFontLoader.load(URL, URL) to create it. Note: I have used files here, but the usual practise is to create a JAR file with the required files and reference them there. I've done it this way to (hopefully) give clarity.
+Next we create a `BitmapFont` instance and use the `BitmapFontLoader.load(URL, URL)` to create it. Note: I have used files here, but the usual practise is to create a JAR file with the required files and reference them there. I've done it this way to (hopefully) give clarity.
 
-Next we create a !BitmapText instance, specifying the !BitmapFont instance we'll be using (the "false" attribute states that we DON'T want this to be right-to-left??). 
+Next we create a `BitmapText` instance, specifying the `BitmapFont` instance we'll be using (the "false" attribute states that we DON'T want this to be right-to-left??). 
 
-Next we specify the Rectangle (this is a com.jmex.angelfont.Rectangle by the way, not an AWT one) that contains the text. The width is handy here because text wrapping has been taken care of.
+Next we specify the `Rectangle` (this is a `com.jmex.angelfont.Rectangle` by the way, not an AWT one) that contains the text. The width is handy here because text wrapping has been taken care of.
 
-Now we specify the size of the font on the screen using text.setSize(16). I haven't had a good play with this. I'm setting the size to the same as the size selected in the BM Font Generator. It will scale up or down if you wish. I currently prefer to download different font files/textures for each size, but I haven't given it a thorough testing yet.
+Now we specify the size of the font on the screen using `text.setSize(16)`. I haven't had a good play with this. I'm setting the size to the same as the size selected in the BM Font Generator. It will scale up or down if you wish. I currently prefer to download different font files/textures for each size, but I haven't given it a thorough testing yet.
 
-With the size set, we can now specify the colour, and even add alpha control if we want. Nice! I've gone for green in this example. I'm also set !LightCombineMode to Off so that we're not affected by any light states.
+With the size set, we can now specify the colour, and even add alpha control if we want. Nice! I've gone for green in this example. I'm also set `LightCombineMode` to Off so that we're not affected by any light states.
 
-Then we set the text, and call txt.update() (which I guess remaps the characters from the png file). If you change the text at any time, you're gonna' need to call this update() method.
+Then we set the text, and call `txt.update()` (which I guess remaps the characters from the png file). If you change the text at any time, you're gonna' need to call this `update()` method.
 
-Finally, we add this text to an "ORTHO" queue. This means (as far as I know so far) is rendered last, meaning it should always be on top of everything else. This isn't actually necessary in this example, as the "!BitmapText" instance is already a Node with QUEUE_ORTHO specified. However, I've added it because I can imagine that you might want to group up your !BitmapText nodes. I also use this node to position where the text goes.
+Finally, we add this text to an "ORTHO" queue. This means (as far as I know so far) is rendered last, meaning it should always be on top of everything else. This isn't actually necessary in this example, as the `BitmapText` instance is already a node with `QUEUE_ORTHO` specified. However, I've added it because I can imagine that you might want to group up your `BitmapText` nodes. I also use this node to position where the text goes.
 
 Hooray, we're there. With any luck, you should now be able to run this and see the text on the screen.
 
 <img src="http://farm2.static.flickr.com/1300/4680228586_cf687e1d31_b.jpg" width="646" height="512" alt="jme-image1" />
+
+By the way, the `BitmapText` node automatically addds a `BlendState` for you, taking advantage of the alpha you put in the PNG image (if you can remember that far back!). Good eh?
 
 Have fun!
