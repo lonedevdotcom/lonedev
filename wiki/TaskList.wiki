@@ -1,5 +1,5 @@
 #summary Completed and to-do's
-#labels Featured,Phase-Design
+#labels Phase-Design
 
 ==Completed==
   * Models created in Blender (spaceship, space station, and hoops). Can be found in "artefacts" sub-directory.
