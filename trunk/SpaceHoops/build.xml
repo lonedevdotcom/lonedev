@@ -77,7 +77,11 @@
 
     <target name="-post-clean">
         <delete dir="gen" failonerror="false"/>
+<<<<<<< .mine
+        <delete dir="." includes="**/hs_err_pid*.log"/>
+=======
         <delete dir="deploy" failonerror="false"/>
+>>>>>>> .r42
     </target>
 
     <target name="-post-init">
