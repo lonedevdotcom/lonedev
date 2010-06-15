@@ -4,6 +4,7 @@ import com.acarter.scenemonitor.SceneMonitor;
 import com.jme.bounding.BoundingBox;
 import com.jme.image.Texture;
 import com.jme.input.ChaseCamera;
+import com.jme.math.FastMath;
 import com.jmex.angelfont.Rectangle;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
@@ -30,10 +31,10 @@ import com.jmex.game.state.BasicGameState;
 import com.jmex.game.state.GameState;
 import com.jmex.game.state.GameStateManager;
 import com.sceneworker.SceneWorker;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.Format;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -47,7 +48,10 @@ public class SpaceHoops1 extends BasicGameState {
     private static final Logger logger = Logger.getLogger(SpaceHoops1.class.getName());
     private ChaseCamera chaseCamera;
     private Skybox skybox;
+    private Spatial spaceShip;
+    private Spatial spaceStation;
 
+    private Format decimalFormat = new DecimalFormat("000.00");
     private Node hudNode;
 //    private int hudTextureWidth, hudTextureHeight;
 
@@ -55,11 +59,11 @@ public class SpaceHoops1 extends BasicGameState {
 
     public static void main(String[] args) {
         StandardGame standardGame = new StandardGame("GameControl", StandardGame.GameType.GRAPHICAL, null);
-        standardGame.getSettings().setSamples(4);
+        standardGame.getSettings().setSamples(0);
         standardGame.getSettings().setDepth(32);
-        standardGame.getSettings().setWidth(1280);
-        standardGame.getSettings().setHeight(800);
-        standardGame.getSettings().setFullscreen(true);
+        standardGame.getSettings().setWidth(640);
+        standardGame.getSettings().setHeight(480);
+        standardGame.getSettings().setFullscreen(false);
 
         standardGame.start();
 
@@ -109,7 +113,7 @@ public class SpaceHoops1 extends BasicGameState {
     }
 
     private void loadSpaceShip() {
-        Spatial spaceShip = loadModel("/artefacts/spacefighter01/spacefighter01-jme.xml", new Vector3f(0, 0, 0), 1f);
+        spaceShip = loadModel("/artefacts/spacefighter01/spacefighter01-jme.xml", new Vector3f(0, 0, 0), 1f);
         spaceShip.addController(new SpaceShipController(spaceShip));
 
         Vector3f targetOffset = new Vector3f();
@@ -125,7 +129,7 @@ public class SpaceHoops1 extends BasicGameState {
     }
 
     private void loadSpaceStation() {
-        Spatial spaceStation = loadModel("/artefacts/spacestation/spacestation-jme.xml", new Vector3f(0, 0, -600), 2f);
+        spaceStation = loadModel("/artefacts/spacestation/spacestation-jme.xml", new Vector3f(0, 0, -600), 2f);
 
         Controller rotationController = new RotationController(spaceStation, Vector3f.UNIT_Y);
         rotationController.setSpeed(0.02f);
@@ -140,6 +144,7 @@ public class SpaceHoops1 extends BasicGameState {
 
 
     private int frameCount = 0;
+    private Spatial empty = new Node("spaceshipClone");
 
     @Override
     public void update(float tpf) {
@@ -155,9 +160,25 @@ public class SpaceHoops1 extends BasicGameState {
         SceneMonitor.getMonitor().updateViewer(tpf);
 
         if (frameCount++ % 200 == 0) {
-            Spatial fighter = rootNode.getChild("fighter01");
-            float[] angles = fighter.getLocalRotation().toAngles(null);
-            txt.setText(""+fighter.getLocalTranslation()+"\nyaw(x)="+angles[0]+ " roll(y)="+angles[1]+" pitch(z)="+angles[2]+"\nfps="+(1f/tpf));
+            empty.setLocalTranslation(spaceShip.getLocalTranslation().clone());
+            empty.setLocalRotation(spaceShip.getLocalRotation().clone());
+            empty.lookAt(spaceStation.getLocalTranslation(), Vector3f.UNIT_Y);
+//            empty.getLocalRotation().subtractLocal(spaceShip.getLocalRotation());
+            float[] angles = empty.getLocalRotation().toAngles(null);
+            txt.setText(
+                    "x=" + decimalFormat.format((angles[0]/FastMath.PI)*180) +
+                    " y=" + decimalFormat.format((angles[1]/FastMath.PI)*180) +
+                    " z=" + decimalFormat.format((angles[2]/FastMath.PI)*180));
+//            Spatial fighter = rootNode.getChild("fighter01");
+//            Spatial spaceStation = rootNode.getChild("spacestation");
+//            Vector3f direction = new Vector3f(fighter.getLocalRotation().getRotationColumn(2));
+//            direction.subtractLocal(spaceStation.getLocalTranslation().normalize());
+//            Vector3f difference = new Vector3f(spaceStation.getLocalTranslation().subtractLocal(fighter.getLocalTranslation()).normalizeLocal());
+
+//            float currentSpeed = ((SpaceShipController)fighter.getController(0)).getSpaceShipVelocity();
+//            float[] angles = fighter.getLocalRotation().toAngles(null);
+//            txt.setText(""+fighter.getLocalTranslation()+"\nyaw(x)="+angles[0]+ " roll(y)="+angles[1]+" pitch(z)="+angles[2]+"\nfps="+(1f/tpf)+"\nspeed="+currentSpeed);
+//            txt.setText(difference.toString());
             txt.update();
         }
 //        rootNode.getChild("Text node").updateRenderState();
@@ -313,6 +334,8 @@ public class SpaceHoops1 extends BasicGameState {
     private void testBitmapFont() {
         URL fontURL = this.getClass().getResource("/artefacts/fonts/arial14.fnt");
         URL textureURL = this.getClass().getResource("/artefacts/fonts/arial14_0.png");
+//        URL fontURL = this.getClass().getResource("/artefacts/fonts/battlefield16.fnt");
+//        URL textureURL = this.getClass().getResource("/artefacts/fonts/battlefield16_0.png");
 
         BitmapFont fnt = null;
 
@@ -330,7 +353,7 @@ public class SpaceHoops1 extends BasicGameState {
         // Setting the text to green, and alpha so it blends a bit with the background
         txt.setDefaultColor(new ColorRGBA(0f, 1f, 0f, 0.75f));
 
-        txt.setText("Richard Hawkes is really cool, very cool in fact!");
+        txt.setText("Richard Hawkes is really cool, really very cool in fact!");
         txt.update();
 
         Node orthoNode = new Node("Ortho Node for Fonts");

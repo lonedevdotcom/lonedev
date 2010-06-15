@@ -18,14 +18,28 @@ import java.util.logging.Logger;
  * @author Richard Hawkes
  */
 public class SpaceShipController extends Controller {
+
+    /**
+     * @return the spaceShipVelocity
+     */
+    public static float getSpaceShipVelocity() {
+        return spaceShipVelocity;
+    }
+
+    /**
+     * @param aSpaceShipVelocity the spaceShipVelocity to set
+     */
+    public static void setSpaceShipVelocity(float aSpaceShipVelocity) {
+        spaceShipVelocity = aSpaceShipVelocity;
+    }
     public enum SpaceShipAction { UP, DOWN, TURN_LEFT, TURN_RIGHT, ROLL_LEFT, ROLL_RIGHT, ACCELERATE, DECELERATE, SNAPSHOT, EXIT };
 
     private Logger logger = Logger.getLogger(SpaceShipController.class.getName());
 
     private Spatial spaceShip;
     private GameControlManager gameControlManager;
-    private final static float TURN_SPEED = 0.75f;
-    private final static float FORWARD_SPEED = -5f;
+    private static float TURN_SPEED = 0.75f;
+    private static float spaceShipVelocity = -25f;
 
     private float hAngle, vAngle, zAngle;
 
@@ -49,8 +63,8 @@ public class SpaceShipController extends Controller {
         bindKey(SpaceShipAction.TURN_RIGHT, KeyInput.KEY_RIGHT, KeyInput.KEY_D);
         bindKey(SpaceShipAction.ROLL_LEFT, KeyInput.KEY_Q);
         bindKey(SpaceShipAction.ROLL_RIGHT, KeyInput.KEY_E);
-        bindKey(SpaceShipAction.ACCELERATE, KeyInput.KEY_W);
-        bindKey(SpaceShipAction.DECELERATE, KeyInput.KEY_S);
+        bindKey(SpaceShipAction.ACCELERATE, KeyInput.KEY_LSHIFT);
+        bindKey(SpaceShipAction.DECELERATE, KeyInput.KEY_LCONTROL);
     }
 
     /**
@@ -122,10 +136,16 @@ public class SpaceShipController extends Controller {
         // between 0 and 2. I think 0=x, 1=y and 2=z... But I is baffled!
         Vector3f direction = new Vector3f(spaceShip.getLocalRotation().getRotationColumn(2));
 
-        float speed = FORWARD_SPEED * tpf;
+        float speed = getSpaceShipVelocity() * tpf;
         newLocation.addLocal(direction.mult(speed));
 
         spaceShip.getLocalTranslation().set(newLocation);
+
+        if (value(SpaceShipAction.ACCELERATE) > 0) {
+            setSpaceShipVelocity(getSpaceShipVelocity() + tpf);
+        } else if (value(SpaceShipAction.DECELERATE) > 0) {
+            setSpaceShipVelocity(getSpaceShipVelocity() - tpf);
+        }
         
         spaceShip.updateRenderState();
         spaceShip.updateModelBound();

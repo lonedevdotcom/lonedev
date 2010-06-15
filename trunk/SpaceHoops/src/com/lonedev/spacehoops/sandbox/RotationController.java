@@ -20,6 +20,7 @@ public class RotationController extends Controller {
         if (isActive()) {
             currentRotation += tpf * getSpeed(); // The controller class has a speed variable.
             model.getLocalRotation().fromAngleNormalAxis(currentRotation, axis);
+//            model.updateRenderState();
             model.updateModelBound();
 
             if (currentRotation >= FastMath.PI*2) {
