@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="changeme" default="all" basedir=".">
+    <description>Builds and deploys SpaceHoops to Google Code.</description>
+
+    <import file="nbproject/build-impl.xml"/>
+    <import file="nbproject/build.xml"/>
+
+    <taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" classpath="C:/Users/Richard/Downloads/ant-googlecode-0.0.2.jar" name="gcupload"/>
+
+    <!--
+        This target is intended for use by my Hudson build engine. So please
+        ignore this!
+    -->
+    <target name="deploy" depends="jar">
+        <property environment="env"/>
+        <mkdir dir="deploy"/>
+        <zip basedir="dist" destfile="deploy/release-${env.BUILD_NUMBER}.zip" update="true"/>
+        <echo message="WORKSPACE=${env.WORKSPACE} username=${gc.username}"/>
+        <gcupload
+            username="${gc.username}"
+            password="${gc.password}"
+            projectname="lonedev"
+            filename="${env.WORKSPACE}/SpaceHoops/deploy/release-${env.BUILD_NUMBER}.zip"
+            targetfilename="release-${env.BUILD_NUMBER}.zip"
+            summary="Automated Hudson Build (${env.BUILD_NUMBER})"
+        />
+    </target>
+
+</project>

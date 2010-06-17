@@ -10,7 +10,6 @@
 <project name="SpaceHoops" default="default" basedir=".">
     <description>Builds, tests, and runs the project SpaceHoops.</description>
     <import file="nbproject/build-impl.xml"/>
-    <taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" classpath="C:/Users/Richard/Downloads/ant-googlecode-0.0.2.jar" name="gcupload"/>
     
     <!--
 
@@ -74,14 +73,10 @@
 
     -->
 
-
     <target name="-post-clean">
         <delete dir="gen" failonerror="false"/>
-<<<<<<< .mine
         <delete dir="." includes="**/hs_err_pid*.log"/>
-=======
         <delete dir="deploy" failonerror="false"/>
->>>>>>> .r42
     </target>
 
     <target name="-post-init">
@@ -95,26 +90,5 @@
             <zipfileset dir="artefacts" prefix="artefacts"/>
         </zip>
     </target>
-
-    <!--
-        This target is intended for use by my Hudson build engine. So please
-        ignore this!
-    -->
-    <target name="deploy" depends="jar">
-        <property environment="env" />
-
-        <mkdir dir="deploy"/>
-        <zip basedir="dist" destfile="deploy/release-${env.BUILD_NUMBER}.zip" update="true"/>
-        <echo message="WORKSPACE=${env.WORKSPACE} username=${gc.username}"/>
-        <gcupload
-            username="${gc.username}"
-            password="${gc.password}"
-            projectname="lonedev"
-            filename="${env.WORKSPACE}/SpaceHoops/deploy/release-${env.BUILD_NUMBER}.zip"
-            targetfilename="release-${env.BUILD_NUMBER}.zip"
-            summary="Automated Hudson Build (${env.BUILD_NUMBER})"
-        />
-    </target>
-
 
 </project>
