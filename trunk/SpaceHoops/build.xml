@@ -73,6 +73,12 @@
 
     -->
 
+    <!-- IMPORTANT !!!!!
+         If you want to override a task from the build-impl.xml, make sure you
+         comment it out in the build-impl.xml file. Otherwise it's not doing
+         the right thing in Hudson.
+    -->
+
     <target name="-post-clean">
         <delete dir="gen" failonerror="false"/>
         <delete dir="." includes="**/hs_err_pid*.log"/>
