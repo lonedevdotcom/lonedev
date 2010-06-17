@@ -80,7 +80,7 @@ public class SpaceHoops1 extends BasicGameState {
     }
 
     protected void init() {
-        createSkybox();
+//        createSkybox();
         loadSpaceShip();
 //        loadModel("/artefacts/spacefighter01/hoop-jme.xml", Vector3f.ZERO, 1f);
         loadSpaceStation();
@@ -126,10 +126,14 @@ public class SpaceHoops1 extends BasicGameState {
         props.put(ChaseCamera.DEFAULT_MAINTAINAZIMUTH, "true");
 
         chaseCamera = new ChaseCamera(DisplaySystem.getDisplaySystem().getRenderer().getCamera(), spaceShip, props);
+
+        // Setting the FrustumFar variable defines how far away it will be
+        // before it disappears.
+        chaseCamera.getCamera().setFrustumFar(10000);
     }
 
     private void loadSpaceStation() {
-        spaceStation = loadModel("/artefacts/spacestation/spacestation-jme.xml", new Vector3f(0, 0, -600), 2f);
+        spaceStation = loadModel("/artefacts/spacestation/spacestation-jme.xml", new Vector3f(0, 0, -600), 5f);
 
         Controller rotationController = new RotationController(spaceStation, Vector3f.UNIT_Y);
         rotationController.setSpeed(0.02f);
@@ -144,7 +148,6 @@ public class SpaceHoops1 extends BasicGameState {
 
 
     private int frameCount = 0;
-    private Spatial empty = new Node("spaceshipClone");
 
     @Override
     public void update(float tpf) {
@@ -154,21 +157,18 @@ public class SpaceHoops1 extends BasicGameState {
         chaseCamera.update(tpf);
 
         //we want to keep the skybox around our eyes, so move it with the camera.
-        skybox.setLocalTranslation(chaseCamera.getCamera().getLocation());
-        skybox.updateRenderState();
+//        skybox.setLocalTranslation(chaseCamera.getCamera().getLocation());
+//        skybox.updateRenderState();
 
         SceneMonitor.getMonitor().updateViewer(tpf);
 
         if (frameCount++ % 200 == 0) {
-            empty.setLocalTranslation(spaceShip.getLocalTranslation().clone());
-            empty.setLocalRotation(spaceShip.getLocalRotation().clone());
-            empty.lookAt(spaceStation.getLocalTranslation(), Vector3f.UNIT_Y);
-//            empty.getLocalRotation().subtractLocal(spaceShip.getLocalRotation());
-            float[] angles = empty.getLocalRotation().toAngles(null);
+            float[] angles = getAnglesFromSpaceshipToObject(spaceStation);
             txt.setText(
                     "x=" + decimalFormat.format((angles[0]/FastMath.PI)*180) +
                     " y=" + decimalFormat.format((angles[1]/FastMath.PI)*180) +
-                    " z=" + decimalFormat.format((angles[2]/FastMath.PI)*180));
+                    " z=" + decimalFormat.format((angles[2]/FastMath.PI)*180) +
+                    " d=" + spaceShip.getLocalTranslation().distance(spaceStation.getLocalTranslation()));
 //            Spatial fighter = rootNode.getChild("fighter01");
 //            Spatial spaceStation = rootNode.getChild("spacestation");
 //            Vector3f direction = new Vector3f(fighter.getLocalRotation().getRotationColumn(2));
@@ -182,6 +182,26 @@ public class SpaceHoops1 extends BasicGameState {
             txt.update();
         }
 //        rootNode.getChild("Text node").updateRenderState();
+    }
+    
+    private Spatial empty = new Node("spaceshipClone");
+
+    /**
+     * My hopeful attempt at returning the rotation angles required to point at
+     * a specified spatial. Note that zero means straight ahead on that axis,
+     * 180 means a full turn.
+     *
+     * @param object The object to rotate towards.
+     *
+     * @return An x,y,z array of the rotation required (note that z will always
+     * be zero).
+     */
+    private float[] getAnglesFromSpaceshipToObject(Spatial object) {
+        empty.setLocalTranslation(spaceShip.getLocalTranslation().clone());
+        empty.setLocalRotation(spaceShip.getLocalRotation().clone());
+        empty.lookAt(object.getLocalTranslation(), Vector3f.UNIT_Y);
+//            empty.getLocalRotation().subtractLocal(spaceShip.getLocalRotation());
+        return empty.getLocalRotation().toAngles(null);
     }
 
     @Override
