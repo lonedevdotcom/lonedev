@@ -39,7 +39,7 @@ public class SpaceShipController extends Controller {
     private Spatial spaceShip;
     private GameControlManager gameControlManager;
     private static float TURN_SPEED = 0.75f;
-    private static float spaceShipVelocity = -25f;
+    private static float spaceShipVelocity = -150f;
 
     private float hAngle, vAngle, zAngle;
 
