@@ -1,0 +1,3 @@
+This folder is not intended for general use. It is for me (Richard) to store my update, branch etc commands and have them available to me on any system that I check the code out to.
+
+Note to self - DO NOT add your username and password to files in here. Copy them locally, update locally, and then run them. Otherwise you'll end up checking your credentials in by mistake.
