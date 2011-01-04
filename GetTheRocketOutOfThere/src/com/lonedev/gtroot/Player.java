@@ -47,4 +47,30 @@ public class Player {
     public void setModules(List<ModuleType> modules) {
         this.modules = modules;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        } else if (! (obj instanceof Player)) {
+            return false;
+        }
+
+        Player pl = (Player)obj;
+
+        if (pl.getPlayerName().equals(this.getPlayerName())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        if (this.getPlayerName() == null) {
+            return 0;
+        } else {
+            return this.getPlayerName().hashCode();
+        }
+    }
 }
