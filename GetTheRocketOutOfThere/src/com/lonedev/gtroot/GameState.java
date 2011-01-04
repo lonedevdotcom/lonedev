@@ -16,8 +16,9 @@ public class GameState {
         this.players = players;
     }
 
-    public void beginGame() {
+    public void newGame() {
         currentPlayer = players.get(0);
+        gameRunning = true;
     }
 
     public void moveToNextPlayer() {
@@ -32,5 +33,16 @@ public class GameState {
 
         currentPlayer = players.get(currentPlayerIndex);
         System.out.println("Next player (" + currentPlayerIndex + ") = " + currentPlayer.getPlayerName());
+    }
+
+    public void playGame() {
+        while (gameRunning) {
+            // get player to roll dice
+            // logic to handle various dice rolls and update the currentPlayer's status.
+            //
+            // game finished?
+            //      yes: winner = XX. gameRunning = false;
+            //      no: moveToNextPlayer();
+        }
     }
 }
