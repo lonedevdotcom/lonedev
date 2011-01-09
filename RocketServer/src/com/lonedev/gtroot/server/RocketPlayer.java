@@ -1,5 +1,6 @@
 package com.lonedev.gtroot.server;
 
+import com.lonedev.gtroot.shared.ClientMessageType;
 import com.sun.sgs.app.AppContext;
 import com.sun.sgs.app.ClientSession;
 import com.sun.sgs.app.ClientSessionListener;
@@ -19,12 +20,14 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
     private static final long serialVersionUID = 1L;
     private PlayerPosition playerPosition;
     private ManagedReference<ClientSession> clientSession;
+    private RocketServerAppListener parent;
 
     private ManagedReference<RocketTable> myCurrentTable;
 
-    public RocketPlayer(ClientSession clientSession) {
+    public RocketPlayer(ClientSession clientSession, RocketServerAppListener parent) {
         super(clientSession.getName());
         this.clientSession = AppContext.getDataManager().createReference(clientSession);
+        this.parent = parent;
         logger.log(Level.INFO, "New RocketPlayer instance for " + getName() + " created");
     }
 
@@ -114,14 +117,43 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
     }
 
     private void handleClientMessage(String decodedMessage) {
-        // The first 5 characters of any message sent by the client
-        int messageType = Integer.parseInt(decodedMessage.substring(0, 4));
+        int messageType = 0;
+
+        try {
+            // The first 5 characters of any message sent by the client
+            messageType = Integer.parseInt(decodedMessage.substring(0, 5));
+        } catch (NumberFormatException nfe) {
+            logger.log(Level.SEVERE, "Received invalid message format from " + getName() + ": " + decodedMessage);
+            return;
+        }
+        
         String messageBody = decodedMessage.substring(5); // The rest of the message
         switch (messageType) {
             case(ClientMessageType.JOIN_TABLE) :
-                // Do what's necessary to join a table.
+                joinTable();
                 break;
+            default:
+                throw new RuntimeException("Unsupported message type (" + messageType + ")");
+        }
+    }
 
+    private void joinTable() {
+        logger.log(Level.INFO, "JOIN_TABLE request received from " + getName());
+
+        if (this.getMyCurrentTable() != null) {
+            // A player can't join more than one table. Handle that here. Either
+            // boot 'em out of their current table, or throw an error telling
+            // them they can't do it... TBD.
+        }
+
+        RocketTable freeTable = parent.getFreeTable();
+        if (freeTable != null) {
+            logger.log(Level.INFO, "Player " + getName() + " joined " + freeTable.getName());
+            freeTable.addPlayer(this);
+            // The below line is actually already done by the RocketTable instance (in the method above!).
+            // this.setMyCurrentTable(AppContext.getDataManager().createReference(freeTable));
+        } else {
+            logger.log(Level.INFO, "No tables available for " + getName());
         }
     }
 }

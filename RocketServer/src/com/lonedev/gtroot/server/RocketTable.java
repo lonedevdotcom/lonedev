@@ -60,8 +60,6 @@ public class RocketTable extends RocketManagedObject {
     }
 
     public boolean addPlayer(RocketPlayer player) {
-        logger.log(Level.INFO, "{0} enters {1}", new Object[] { player, this });
-
         ManagedReference<RocketPlayer> playerRef = AppContext.getDataManager().createReference(player);
         RocketPlayer updatablePlayer = playerRef.getForUpdate();
 
@@ -71,24 +69,28 @@ public class RocketTable extends RocketManagedObject {
             player1 = playerRef;
             updatablePlayer.setMyCurrentTable(AppContext.getDataManager().createReference(this));
             updatablePlayer.setPlayerPosition(PlayerPosition.PLAYER1);
+            logger.log(Level.INFO, "{0} enters {1} as player 1", new Object[] { player.getName(), this.getName() });
             updateTableAvailabilty();
             return true;
-        } else if (player == null) {
+        } else if (player2 == null) {
             player2 = playerRef;
             updatablePlayer.setMyCurrentTable(AppContext.getDataManager().createReference(this));
             updatablePlayer.setPlayerPosition(PlayerPosition.PLAYER2);
+            logger.log(Level.INFO, "{0} enters {1} as player 2", new Object[] { player.getName(), this.getName() });
             updateTableAvailabilty();
             return true;
         } else if (player3 == null) {
             player3 = playerRef;
             updatablePlayer.setMyCurrentTable(AppContext.getDataManager().createReference(this));
             updatablePlayer.setPlayerPosition(PlayerPosition.PLAYER3);
+            logger.log(Level.INFO, "{0} enters {1} as player 3", new Object[] { player.getName(), this.getName() });
             updateTableAvailabilty();
             return true;
         } else if (player4 == null) {
             player4 = playerRef;
             updatablePlayer.setMyCurrentTable(AppContext.getDataManager().createReference(this));
             updatablePlayer.setPlayerPosition(PlayerPosition.PLAYER4);
+            logger.log(Level.INFO, "{0} enters {1} as player 4", new Object[] { player.getName(), this.getName() });
             updateTableAvailabilty();
             return true;
         } else {
@@ -101,14 +103,16 @@ public class RocketTable extends RocketManagedObject {
         AppContext.getDataManager().markForUpdate(this);
 
         if (player1 != null && player2 != null && player3 != null && player4 != null) {
+            logger.log(Level.INFO, getName() + " is now full!!");
             tableAvailable = false;
         } else {
+            logger.log(Level.INFO, getName() + " still has availability");
             tableAvailable = true;
         }
     }
 
     public boolean removePlayer(RocketPlayer player) {
-        logger.log(Level.INFO, "{0} leaves {1}", new Object[] { player, this });
+        logger.log(Level.INFO, "{0} leaves {1}", new Object[] { player.getName(), this.getName() });
 
         AppContext.getDataManager().markForUpdate(this);
         
