@@ -1,5 +1,6 @@
 package rocketclienttest;
 
+import com.lonedev.gtroot.shared.ClientMessageType;
 import com.sun.sgs.client.ClientChannel;
 import com.sun.sgs.client.ClientChannelListener;
 import com.sun.sgs.client.simple.SimpleClient;
@@ -39,19 +40,17 @@ public class Client implements SimpleClientListener {
         }
 
         for (int i = 0; i < 5; i++) {
-            try {
-                Thread.sleep(5000);
-            } catch (Exception ex) {
-            }
-            System.out.println("sending message");
+        try { Thread.sleep(5000); } catch (Exception ex) { }
+        System.out.println("sending message");
 
-            try {
-                sc.send(encodeString("test string " + i));
-            } catch (Exception ex) {
-                System.out.println("message send failed: " + ex);
-            }
+        try {
+            sc.send(encodeString(ClientMessageType.createJoinTableMessage()));
+        } catch (Exception ex) {
+            System.out.println("message send failed: " + ex);
+        }
         }
 
+        try { Thread.sleep(20000); } catch (Exception ex) { }
         sc.logout(false);
     }
 
