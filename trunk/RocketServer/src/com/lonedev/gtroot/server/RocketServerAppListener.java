@@ -45,6 +45,16 @@ public class RocketServerAppListener implements AppListener, Serializable {
     }
 
     public ClientSessionListener loggedIn(ClientSession session) {
-        return new RocketPlayer(session);
+        return new RocketPlayer(session, this);
+    }
+
+    public RocketTable getFreeTable() {
+        for (ManagedReference<RocketTable> rocketTableRef : tables) {
+            if (rocketTableRef.get().isTableAvailable()) {
+                return rocketTableRef.get();
+            }
+        }
+
+        return null;
     }
 }
