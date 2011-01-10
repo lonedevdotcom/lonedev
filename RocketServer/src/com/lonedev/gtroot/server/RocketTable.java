@@ -69,6 +69,7 @@ public class RocketTable extends RocketManagedObject {
             player1 = playerRef;
             updatablePlayer.setMyCurrentTable(AppContext.getDataManager().createReference(this));
             updatablePlayer.setPlayerPosition(PlayerPosition.PLAYER1);
+            updatablePlayer.resetModules();
             logger.log(Level.INFO, "{0} enters {1} as player 1", new Object[] { player.getName(), this.getName() });
             updateTableAvailabilty();
             return true;
@@ -94,7 +95,7 @@ public class RocketTable extends RocketManagedObject {
             updateTableAvailabilty();
             return true;
         } else {
-            logger.log(Level.WARNING, "Not sure why, but a player has tried to join a table with no free spaces!");
+            logger.log(Level.WARNING, "Not sure how, but a player has tried to join a table with no free spaces!");
             return false;
         }
     }

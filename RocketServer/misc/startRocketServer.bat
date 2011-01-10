@@ -1,0 +1,1 @@
+java -jar bin/sgs-boot.jar conf/RocketServer.boot
