@@ -27,4 +27,12 @@ public class Utils {
             throw new Error("Required character set " + MESSAGE_CHARSET + " not found", e);
         }
     }
+
+    private static String encryptString(String message) {
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    private static String decryptString(String message) {
+        throw new RuntimeException("Not implemented yet");
+    }
 }
