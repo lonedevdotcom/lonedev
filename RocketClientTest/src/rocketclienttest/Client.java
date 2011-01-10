@@ -1,12 +1,12 @@
 package rocketclienttest;
 
 import com.lonedev.gtroot.shared.ClientMessageType;
+import com.lonedev.gtroot.shared.Utils;
 import com.sun.sgs.client.ClientChannel;
 import com.sun.sgs.client.ClientChannelListener;
 import com.sun.sgs.client.simple.SimpleClient;
 import com.sun.sgs.client.simple.SimpleClientListener;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.PasswordAuthentication;
 import java.nio.ByteBuffer;
 import java.util.Properties;
@@ -17,8 +17,6 @@ import java.util.Random;
  * @author Richard Hawkes
  */
 public class Client implements SimpleClientListener {
-
-    public static final String MESSAGE_CHARSET = "UTF-8";
     Random random = new Random();
 
     public static void main(String[] args) {
@@ -39,18 +37,18 @@ public class Client implements SimpleClientListener {
             System.exit(1);
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 3; i++) {
         try { Thread.sleep(5000); } catch (Exception ex) { }
         System.out.println("sending message");
 
         try {
-            sc.send(encodeString(ClientMessageType.createJoinTableMessage()));
+            sc.send(Utils.encodeString(ClientMessageType.createJoinTableMessage()));
         } catch (Exception ex) {
             System.out.println("message send failed: " + ex);
         }
         }
 
-        try { Thread.sleep(20000); } catch (Exception ex) { }
+        try { Thread.sleep(5000); } catch (Exception ex) { }
         sc.logout(false);
     }
 
@@ -86,23 +84,5 @@ public class Client implements SimpleClientListener {
 
     public void disconnected(boolean graceful, String arg1) {
         System.out.println("Disconected, graceful=" + graceful + ": " + arg1);
-    }
-
-    protected static ByteBuffer encodeString(String s) {
-        try {
-            return ByteBuffer.wrap(s.getBytes(MESSAGE_CHARSET));
-        } catch (UnsupportedEncodingException e) {
-            throw new Error("Required character set " + MESSAGE_CHARSET + " not found", e);
-        }
-    }
-
-    protected static String decodeString(ByteBuffer buf) {
-        try {
-            byte[] bytes = new byte[buf.remaining()];
-            buf.get(bytes);
-            return new String(bytes, MESSAGE_CHARSET);
-        } catch (UnsupportedEncodingException e) {
-            throw new Error("Required character set " + MESSAGE_CHARSET + " not found", e);
-        }
     }
 }
