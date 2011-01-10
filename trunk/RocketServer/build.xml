@@ -76,6 +76,11 @@
     <target name="-post-jar">
         <echo message="Copying jar file to Darkstart deploy directory"/>
         <copy file="dist/RocketServer.jar" todir="C:\\Darkstar\\sgs-server-dist-0.10.2.1\\deploy"/>
+        <echo message="Copying conf and batch files to server directory"/>
+        <copy overwrite="true" file="misc/startRocketServer.bat" todir="C:\\Darkstar\\sgs-server-dist-0.10.2.1"/>
+        <copy overwrite="true" file="misc/RocketServer.boot" todir="C:\\Darkstar\\sgs-server-dist-0.10.2.1\\conf"/>
+        <copy overwrite="true" file="misc/RocketServer.properties" todir="C:\\Darkstar\\sgs-server-dist-0.10.2.1\\conf"/>
+        <copy overwrite="true" file="misc/logging.properties" todir="C:\\Darkstar\\sgs-server-dist-0.10.2.1\\conf"/>
         <echo message="Now cleaning old Darkstar data directory for clean run"/>
         <delete dir="C:\\Darkstar\\sgs-server-dist-0.10.2.1\\data"/>
     </target>

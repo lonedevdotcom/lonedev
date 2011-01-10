@@ -50,8 +50,9 @@ public class RocketServerAppListener implements AppListener, Serializable {
 
     public RocketTable getFreeTable() {
         for (ManagedReference<RocketTable> rocketTableRef : tables) {
-            if (rocketTableRef.get().isTableAvailable()) {
-                return rocketTableRef.get();
+            RocketTable rt = rocketTableRef.get();
+            if (rt.isTableAvailable()) {
+                return rt;
             }
         }
 

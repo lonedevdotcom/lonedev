@@ -1,12 +1,16 @@
 package com.lonedev.gtroot.server;
 
+import com.lonedev.gtroot.shared.RocketModule;
 import com.lonedev.gtroot.shared.ClientMessageType;
+import com.lonedev.gtroot.shared.Utils;
 import com.sun.sgs.app.AppContext;
 import com.sun.sgs.app.ClientSession;
 import com.sun.sgs.app.ClientSessionListener;
 import com.sun.sgs.app.ManagedReference;
-import java.io.UnsupportedEncodingException;
+import java.awt.Color;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,12 +19,12 @@ import java.util.logging.Logger;
  */
 public class RocketPlayer extends RocketManagedObject implements ClientSessionListener {
     private static final Logger logger = Logger.getLogger(RocketPlayer.class.getName());
-    public static final String MESSAGE_CHARSET = "UTF-8";
     
     private static final long serialVersionUID = 1L;
     private PlayerPosition playerPosition;
     private ManagedReference<ClientSession> clientSession;
     private RocketServerAppListener parent;
+    private List<RocketModule> modules = new ArrayList<RocketModule>();
 
     private ManagedReference<RocketTable> myCurrentTable;
 
@@ -79,7 +83,7 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
     }
 
     public void receivedMessage(ByteBuffer message) {
-        String decodedMessage = decodeString(message);
+        String decodedMessage = Utils.decodeString(message);
         logger.log(Level.INFO, "Received message from " + getName() + ": " + decodedMessage);
         handleClientMessage(decodedMessage);
     }
@@ -98,23 +102,6 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
         AppContext.getDataManager().removeObject(this);
     }
 
-    protected static ByteBuffer encodeString(String s) {
-        try {
-            return ByteBuffer.wrap(s.getBytes(MESSAGE_CHARSET));
-        } catch (UnsupportedEncodingException e) {
-            throw new Error("Required character set " + MESSAGE_CHARSET + " not found", e);
-        }
-    }
-
-    protected static String decodeString(ByteBuffer buf) {
-        try {
-            byte[] bytes = new byte[buf.remaining()];
-            buf.get(bytes);
-            return new String(bytes, MESSAGE_CHARSET);
-        } catch (UnsupportedEncodingException e) {
-            throw new Error("Required character set " + MESSAGE_CHARSET + " not found", e);
-        }
-    }
 
     private void handleClientMessage(String decodedMessage) {
         int messageType = 0;
@@ -141,9 +128,8 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
         logger.log(Level.INFO, "JOIN_TABLE request received from " + getName());
 
         if (this.getMyCurrentTable() != null) {
-            // A player can't join more than one table. Handle that here. Either
-            // boot 'em out of their current table, or throw an error telling
-            // them they can't do it... TBD.
+            logger.log(Level.SEVERE, getName() + " attempting to join a table, but is already on " + this.getMyCurrentTable().get().getName());
+            return;
         }
 
         RocketTable freeTable = parent.getFreeTable();
@@ -156,4 +142,18 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
             logger.log(Level.INFO, "No tables available for " + getName());
         }
     }
+
+    public void addModule(Color colour) {
+
+    }
+
+    public void removeModules(Color colour) {
+
+    }
+
+    public void resetModules() {
+        AppContext.getDataManager().markForUpdate(this);
+        modules = new ArrayList<RocketModule>();
+    }
+
 }
