@@ -23,15 +23,13 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
     private static final long serialVersionUID = 1L;
     private PlayerPosition playerPosition;
     private ManagedReference<ClientSession> clientSession;
-    private RocketServerAppListener parent;
     private List<RocketModule> modules = new ArrayList<RocketModule>();
 
     private ManagedReference<RocketTable> myCurrentTable;
 
-    public RocketPlayer(ClientSession clientSession, RocketServerAppListener parent) {
+    public RocketPlayer(ClientSession clientSession) {
         super(clientSession.getName());
         this.clientSession = AppContext.getDataManager().createReference(clientSession);
-        this.parent = parent;
         logger.log(Level.INFO, "New RocketPlayer instance for " + getName() + " created");
     }
 
@@ -132,7 +130,8 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
             return;
         }
 
-        RocketTable freeTable = parent.getFreeTable();
+        RocketTable freeTable = ServerUtils.getInstance().getFreeTable();
+        
         if (freeTable != null) {
             logger.log(Level.INFO, "Player " + getName() + " joined " + freeTable.getName());
             freeTable.addPlayer(this);
