@@ -1,6 +1,7 @@
 package rocketclienttest;
 
-import com.lonedev.gtroot.shared.ClientMessageType;
+import com.lonedev.gtroot.shared.ClientServerMessageInteractor;
+import com.lonedev.gtroot.shared.ClientServerMessageInteractor;
 import com.lonedev.gtroot.shared.Utils;
 import com.sun.sgs.client.ClientChannel;
 import com.sun.sgs.client.ClientChannelListener;
@@ -43,7 +44,7 @@ public class Client implements SimpleClientListener, ClientChannelListener {
         System.out.println("sending message");
 
         try {
-            sc.send(Utils.encodeString(ClientMessageType.createJoinTableMessage()));
+            sc.send(Utils.encodeString(ClientServerMessageInteractor.createJoinTableRequestMessage()));
         } catch (Exception ex) {
             System.out.println("message send failed: " + ex);
         }
@@ -73,7 +74,7 @@ public class Client implements SimpleClientListener, ClientChannelListener {
         return this;
     }
 
-    public void receivedMessage(ByteBuffer arg0) {
+    public void receivedMessage(ByteBuffer message) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -90,7 +91,7 @@ public class Client implements SimpleClientListener, ClientChannelListener {
     }
 
     public void receivedMessage(ClientChannel channel, ByteBuffer message) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("aha, message received from the table channel " + channel.getName() + ": " + Utils.decodeString(message));
     }
 
     public void leftChannel(ClientChannel channel) {
