@@ -16,8 +16,9 @@ import java.util.Random;
  *
  * @author Richard Hawkes
  */
-public class Client implements SimpleClientListener {
+public class Client implements SimpleClientListener, ClientChannelListener {
     Random random = new Random();
+    ClientChannel tableChannel;
 
     public static void main(String[] args) {
         Client c = new Client();
@@ -67,7 +68,9 @@ public class Client implements SimpleClientListener {
     }
 
     public ClientChannelListener joinedChannel(ClientChannel channel) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("Sweet, I have joined the table channel: " + channel.getName());
+        tableChannel = channel;
+        return this;
     }
 
     public void receivedMessage(ByteBuffer arg0) {
@@ -84,5 +87,14 @@ public class Client implements SimpleClientListener {
 
     public void disconnected(boolean graceful, String arg1) {
         System.out.println("Disconected, graceful=" + graceful + ": " + arg1);
+    }
+
+    public void receivedMessage(ClientChannel channel, ByteBuffer message) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void leftChannel(ClientChannel channel) {
+        System.out.println("I've been dumped from channel: " + channel.getName());
+        tableChannel = null;
     }
 }
