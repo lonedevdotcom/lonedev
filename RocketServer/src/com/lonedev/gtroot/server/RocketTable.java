@@ -1,7 +1,12 @@
 package com.lonedev.gtroot.server;
 
 import com.sun.sgs.app.AppContext;
+import com.sun.sgs.app.Channel;
+import com.sun.sgs.app.ChannelListener;
+import com.sun.sgs.app.ClientSession;
+import com.sun.sgs.app.Delivery;
 import com.sun.sgs.app.ManagedReference;
+import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,19 +19,23 @@ import java.util.logging.Logger;
  *
  * @author Richard Hawkes
  */
-public class RocketTable extends RocketManagedObject {
+public class RocketTable extends RocketManagedObject implements ChannelListener {
     private static final Logger logger = Logger.getLogger(RocketTable.class.getName());
     ManagedReference<RocketPlayer> player1, player2, player3, player4;
     private int tableId;
     private boolean tableAvailable = true;
     private byte currentDiceRoll;
     Random diceRandom = new Random();
+    ManagedReference<Channel> tableChannelRef;
 
     private static final long serialVersionUID = 1L;
 
     public RocketTable(int tableId) {
         super("Table" + tableId);
         this.tableId = tableId;
+        
+        Channel tableChannel = AppContext.getChannelManager().createChannel(getName() + "-channel", this, Delivery.RELIABLE);
+        tableChannelRef = AppContext.getDataManager().createReference(tableChannel);
     }
 
     public boolean isTableAvailable() {
@@ -61,41 +70,50 @@ public class RocketTable extends RocketManagedObject {
 
     public boolean addPlayer(RocketPlayer player) {
         ManagedReference<RocketPlayer> playerRef = AppContext.getDataManager().createReference(player);
-        RocketPlayer updatablePlayer = playerRef.getForUpdate();
+//        RocketPlayer updatablePlayer = playerRef.getForUpdate();
 
+        AppContext.getDataManager().markForUpdate(player);
         AppContext.getDataManager().markForUpdate(this);
+        Channel tableChannel = tableChannelRef.getForUpdate();
 
+        tableChannel.join(player.getClientSessionRef().get());
+
+        // this logic needs condensing.
         if (player1 == null) {
             player1 = playerRef;
-            updatablePlayer.setMyCurrentTable(AppContext.getDataManager().createReference(this));
-            updatablePlayer.setPlayerPosition(PlayerPosition.PLAYER1);
-            updatablePlayer.resetModules();
+            player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
+            player.setPlayerPosition(PlayerPosition.PLAYER1);
+            player.resetModules();
             logger.log(Level.INFO, "{0} enters {1} as player 1", new Object[] { player.getName(), this.getName() });
+            tableChannel.send(Utils.encodeString("PLAYER"))
             updateTableAvailabilty();
             return true;
         } else if (player2 == null) {
             player2 = playerRef;
-            updatablePlayer.setMyCurrentTable(AppContext.getDataManager().createReference(this));
-            updatablePlayer.setPlayerPosition(PlayerPosition.PLAYER2);
+            player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
+            player.setPlayerPosition(PlayerPosition.PLAYER2);
             logger.log(Level.INFO, "{0} enters {1} as player 2", new Object[] { player.getName(), this.getName() });
             updateTableAvailabilty();
             return true;
         } else if (player3 == null) {
             player3 = playerRef;
-            updatablePlayer.setMyCurrentTable(AppContext.getDataManager().createReference(this));
-            updatablePlayer.setPlayerPosition(PlayerPosition.PLAYER3);
+            player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
+            player.setPlayerPosition(PlayerPosition.PLAYER3);
             logger.log(Level.INFO, "{0} enters {1} as player 3", new Object[] { player.getName(), this.getName() });
             updateTableAvailabilty();
             return true;
         } else if (player4 == null) {
             player4 = playerRef;
-            updatablePlayer.setMyCurrentTable(AppContext.getDataManager().createReference(this));
-            updatablePlayer.setPlayerPosition(PlayerPosition.PLAYER4);
+            player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
+            player.setPlayerPosition(PlayerPosition.PLAYER4);
             logger.log(Level.INFO, "{0} enters {1} as player 4", new Object[] { player.getName(), this.getName() });
             updateTableAvailabilty();
             return true;
         } else {
+            // Theoretically, this should never happen as the tableAvailability
+            // won't let players in if the table is full.
             logger.log(Level.WARNING, "Not sure how, but a player has tried to join a table with no free spaces!");
+            tableChannel.leave(player.getClientSessionRef().get());
             return false;
         }
     }
@@ -116,6 +134,8 @@ public class RocketTable extends RocketManagedObject {
         logger.log(Level.INFO, "{0} leaves {1}", new Object[] { player.getName(), this.getName() });
 
         AppContext.getDataManager().markForUpdate(this);
+        Channel tableChannel = tableChannelRef.getForUpdate();
+        tableChannel.leave(player.getClientSessionRef().get());
         
         // The reference created below should be identical to one of the players
         // on our table. I think createReference has some clever logic to
@@ -164,5 +184,9 @@ public class RocketTable extends RocketManagedObject {
     @Override
     public int hashCode() {
         return getName().hashCode();
+    }
+
+    public void receivedMessage(Channel channel, ClientSession sender, ByteBuffer message) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
