@@ -1,7 +1,7 @@
 package com.lonedev.gtroot.server;
 
 import com.lonedev.gtroot.shared.RocketModule;
-import com.lonedev.gtroot.shared.ClientMessageType;
+import com.lonedev.gtroot.shared.ClientServerMessageInteractor;
 import com.lonedev.gtroot.shared.Utils;
 import com.sun.sgs.app.AppContext;
 import com.sun.sgs.app.ClientSession;
@@ -114,7 +114,7 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
         
         String messageBody = decodedMessage.substring(5); // The rest of the message
         switch (messageType) {
-            case(ClientMessageType.JOIN_TABLE) :
+            case(ClientServerMessageInteractor.JOIN_TABLE) :
                 joinTable();
                 break;
             default:

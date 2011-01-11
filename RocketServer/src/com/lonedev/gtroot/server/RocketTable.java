@@ -1,5 +1,7 @@
 package com.lonedev.gtroot.server;
 
+import com.lonedev.gtroot.shared.ClientServerMessageInteractor;
+import com.lonedev.gtroot.shared.Utils;
 import com.sun.sgs.app.AppContext;
 import com.sun.sgs.app.Channel;
 import com.sun.sgs.app.ChannelListener;
@@ -85,7 +87,7 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
             player.setPlayerPosition(PlayerPosition.PLAYER1);
             player.resetModules();
             logger.log(Level.INFO, "{0} enters {1} as player 1", new Object[] { player.getName(), this.getName() });
-            tableChannel.send(Utils.encodeString("PLAYER"))
+            tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 1)));
             updateTableAvailabilty();
             return true;
         } else if (player2 == null) {
@@ -93,6 +95,7 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
             player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
             player.setPlayerPosition(PlayerPosition.PLAYER2);
             logger.log(Level.INFO, "{0} enters {1} as player 2", new Object[] { player.getName(), this.getName() });
+            tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 2)));
             updateTableAvailabilty();
             return true;
         } else if (player3 == null) {
@@ -100,6 +103,7 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
             player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
             player.setPlayerPosition(PlayerPosition.PLAYER3);
             logger.log(Level.INFO, "{0} enters {1} as player 3", new Object[] { player.getName(), this.getName() });
+            tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 3)));
             updateTableAvailabilty();
             return true;
         } else if (player4 == null) {
@@ -107,6 +111,7 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
             player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
             player.setPlayerPosition(PlayerPosition.PLAYER4);
             logger.log(Level.INFO, "{0} enters {1} as player 4", new Object[] { player.getName(), this.getName() });
+            tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 4)));
             updateTableAvailabilty();
             return true;
         } else {
