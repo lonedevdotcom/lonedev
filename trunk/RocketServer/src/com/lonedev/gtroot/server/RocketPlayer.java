@@ -22,14 +22,14 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
     
     private static final long serialVersionUID = 1L;
     private PlayerPosition playerPosition;
-    private ManagedReference<ClientSession> clientSession;
+    private ManagedReference<ClientSession> clientSessionRef;
     private List<RocketModule> modules = new ArrayList<RocketModule>();
 
     private ManagedReference<RocketTable> myCurrentTable;
 
     public RocketPlayer(ClientSession clientSession) {
         super(clientSession.getName());
-        this.clientSession = AppContext.getDataManager().createReference(clientSession);
+        this.clientSessionRef = AppContext.getDataManager().createReference(clientSession);
         logger.log(Level.INFO, "New RocketPlayer instance for " + getName() + " created");
     }
 
@@ -153,6 +153,20 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
     public void resetModules() {
         AppContext.getDataManager().markForUpdate(this);
         modules = new ArrayList<RocketModule>();
+    }
+
+    /**
+     * @return the clientSessionRef
+     */
+    public ManagedReference<ClientSession> getClientSessionRef() {
+        return clientSessionRef;
+    }
+
+    /**
+     * @param clientSessionRef the clientSessionRef to set
+     */
+    public void setClientSessionRef(ManagedReference<ClientSession> clientSessionRef) {
+        this.clientSessionRef = clientSessionRef;
     }
 
 }
