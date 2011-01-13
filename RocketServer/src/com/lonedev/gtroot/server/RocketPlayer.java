@@ -21,31 +21,15 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
     private static final Logger logger = Logger.getLogger(RocketPlayer.class.getName());
     
     private static final long serialVersionUID = 1L;
-    private PlayerPosition playerPosition;
-    private ManagedReference<ClientSession> clientSessionRef;
-    private List<RocketModule> modules = new ArrayList<RocketModule>();
 
-    private ManagedReference<RocketTable> myCurrentTable;
+    private ManagedReference<ClientSession> clientSessionRef;
+
+    private ManagedReference<RocketTable> myCurrentTableRef;
 
     public RocketPlayer(ClientSession clientSession) {
         super(clientSession.getName());
         this.clientSessionRef = AppContext.getDataManager().createReference(clientSession);
         logger.log(Level.INFO, "New RocketPlayer instance for " + getName() + " created");
-    }
-
-    /**
-     * @return the playerPosition
-     */
-    public PlayerPosition getPlayerPosition() {
-        return playerPosition;
-    }
-
-    /**
-     * @param playerPosition the playerPosition to set
-     */
-    public void setPlayerPosition(PlayerPosition playerPosition) {
-        AppContext.getDataManager().markForUpdate(this);
-        this.playerPosition = playerPosition;
     }
 
     @Override
@@ -69,15 +53,15 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
     /**
      * @return the myCurrentTable
      */
-    public ManagedReference<RocketTable> getMyCurrentTable() {
-        return myCurrentTable;
+    public ManagedReference<RocketTable> getMyCurrentTableRef() {
+        return myCurrentTableRef;
     }
 
     /**
      * @param myCurrentTable the myCurrentTable to set
      */
-    public void setMyCurrentTable(ManagedReference<RocketTable> myCurrentTable) {
-        this.myCurrentTable = myCurrentTable;
+    public void setMyCurrentTable(ManagedReference<RocketTable> myCurrentTableRef) {
+        this.myCurrentTableRef = myCurrentTableRef;
     }
 
     public void receivedMessage(ByteBuffer message) {
@@ -92,8 +76,8 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
         // Remove the player from the table they're playing on (if they're
         // playing one). Man, I am getting pretty tired of these references
         // bouncing about.
-        if (getMyCurrentTable() != null) {
-            RocketTable tableRef = getMyCurrentTable().getForUpdate();
+        if (getMyCurrentTableRef() != null) {
+            RocketTable tableRef = getMyCurrentTableRef().getForUpdate();
             tableRef.removePlayer(this);
         }
 
@@ -125,8 +109,8 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
     private void joinTable() {
         logger.log(Level.INFO, "JOIN_TABLE request received from " + getName());
 
-        if (this.getMyCurrentTable() != null) {
-            logger.log(Level.SEVERE, getName() + " attempting to join a table, but is already on " + this.getMyCurrentTable().get().getName());
+        if (this.getMyCurrentTableRef() != null) {
+            logger.log(Level.SEVERE, getName() + " attempting to join a table, but is already on " + this.getMyCurrentTableRef().get().getName());
             return;
         }
 
@@ -140,19 +124,6 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
         } else {
             logger.log(Level.INFO, "No tables available for " + getName());
         }
-    }
-
-    public void addModule(Color colour) {
-
-    }
-
-    public void removeModules(Color colour) {
-
-    }
-
-    public void resetModules() {
-        AppContext.getDataManager().markForUpdate(this);
-        modules = new ArrayList<RocketModule>();
     }
 
     /**
