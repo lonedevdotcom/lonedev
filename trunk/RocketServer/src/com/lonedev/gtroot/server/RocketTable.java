@@ -45,9 +45,11 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
     }
 
     public void setTableAvailable(boolean tableAvailable) {
-        logger.log(Level.INFO, "Setting tableAvailable to {0} on {1}", new Object[] { tableAvailable, getName() });
-        AppContext.getDataManager().markForUpdate(this);
-        this.tableAvailable = tableAvailable;
+        if (tableAvailable != this.tableAvailable) {
+            logger.log(Level.INFO, "Setting tableAvailable to {0} on {1}", new Object[]{tableAvailable, getName()});
+            AppContext.getDataManager().markForUpdate(this);
+            this.tableAvailable = tableAvailable;
+        }
     }
 
     /**
@@ -84,8 +86,6 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
         if (player1 == null) {
             player1 = playerRef;
             player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
-            player.setPlayerPosition(PlayerPosition.PLAYER1);
-            player.resetModules();
             logger.log(Level.INFO, "{0} enters {1} as player 1", new Object[] { player.getName(), this.getName() });
             tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 1)));
             updateTableAvailabilty();
@@ -93,7 +93,6 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
         } else if (player2 == null) {
             player2 = playerRef;
             player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
-            player.setPlayerPosition(PlayerPosition.PLAYER2);
             logger.log(Level.INFO, "{0} enters {1} as player 2", new Object[] { player.getName(), this.getName() });
             tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 2)));
             updateTableAvailabilty();
@@ -101,7 +100,6 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
         } else if (player3 == null) {
             player3 = playerRef;
             player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
-            player.setPlayerPosition(PlayerPosition.PLAYER3);
             logger.log(Level.INFO, "{0} enters {1} as player 3", new Object[] { player.getName(), this.getName() });
             tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 3)));
             updateTableAvailabilty();
@@ -109,7 +107,6 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
         } else if (player4 == null) {
             player4 = playerRef;
             player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
-            player.setPlayerPosition(PlayerPosition.PLAYER4);
             logger.log(Level.INFO, "{0} enters {1} as player 4", new Object[] { player.getName(), this.getName() });
             tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 4)));
             updateTableAvailabilty();
@@ -124,14 +121,12 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
     }
 
     private void updateTableAvailabilty() {
-        AppContext.getDataManager().markForUpdate(this);
-
         if (player1 != null && player2 != null && player3 != null && player4 != null) {
             logger.log(Level.INFO, getName() + " is now full!!");
-            tableAvailable = false;
+            setTableAvailable(false);
         } else {
             logger.log(Level.INFO, getName() + " still has availability");
-            tableAvailable = true;
+            setTableAvailable(true);
         }
     }
 
@@ -148,24 +143,20 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
         ManagedReference<RocketPlayer> playerRef = AppContext.getDataManager().createReference(player);
 
         if (playerRef.equals(player1)) {
-            player1.getForUpdate().setPlayerPosition(null);
             player1 = null;
-            tableAvailable = true;
+            setTableAvailable(true);
             return true;
         } else if (playerRef.equals(player2)) {
-            player2.getForUpdate().setPlayerPosition(null);
             player2 = null;
-            tableAvailable = true;
+            setTableAvailable(true);
             return true;
         } else if (playerRef.equals(player3)) {
-            player3.getForUpdate().setPlayerPosition(null);
             player3 = null;
-            tableAvailable = true;
+            setTableAvailable(true);
             return true;
         } else if (playerRef.equals(player4)) {
-            player4.getForUpdate().setPlayerPosition(null);
             player4 = null;
-            tableAvailable = true;
+            setTableAvailable(true);
             return true;
         } else {
             logger.log(Level.SEVERE, "player " + player.getName() + " doesn't appear to be one of this table!");
