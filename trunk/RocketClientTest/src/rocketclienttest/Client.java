@@ -1,7 +1,6 @@
 package rocketclienttest;
 
 import com.lonedev.gtroot.shared.ClientServerMessageInteractor;
-import com.lonedev.gtroot.shared.ClientServerMessageInteractor;
 import com.lonedev.gtroot.shared.Utils;
 import com.sun.sgs.client.ClientChannel;
 import com.sun.sgs.client.ClientChannelListener;
