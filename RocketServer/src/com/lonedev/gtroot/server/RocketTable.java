@@ -1,6 +1,7 @@
 package com.lonedev.gtroot.server;
 
 import com.lonedev.gtroot.shared.ClientServerMessageInteractor;
+import com.lonedev.gtroot.shared.TableStatus;
 import com.lonedev.gtroot.shared.Utils;
 import com.sun.sgs.app.AppContext;
 import com.sun.sgs.app.Channel;
@@ -23,8 +24,9 @@ import java.util.logging.Logger;
  */
 public class RocketTable extends RocketManagedObject implements ChannelListener {
     private static final Logger logger = Logger.getLogger(RocketTable.class.getName());
-    ManagedReference<RocketPlayer> player1, player2, player3, player4;
+    ManagedReference<RocketPlayer> player1, player2, player3, player4, currentPlayer;
     private int tableId;
+    private TableStatus currentStatus;
     private boolean tableAvailable = true;
     private byte currentDiceRoll;
     Random diceRandom = new Random();
@@ -38,6 +40,8 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
         
         Channel tableChannel = AppContext.getChannelManager().createChannel(getName() + "-channel", this, Delivery.RELIABLE);
         tableChannelRef = AppContext.getDataManager().createReference(tableChannel);
+
+        setCurrentStatus(TableStatus.EMPTY);
     }
 
     public boolean isTableAvailable() {
@@ -74,11 +78,8 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
 
     public boolean addPlayer(RocketPlayer player) {
         ManagedReference<RocketPlayer> playerRef = AppContext.getDataManager().createReference(player);
-//        RocketPlayer updatablePlayer = playerRef.getForUpdate();
-
-        AppContext.getDataManager().markForUpdate(player);
         AppContext.getDataManager().markForUpdate(this);
-        Channel tableChannel = tableChannelRef.getForUpdate();
+        Channel tableChannel = tableChannelRef.getForUpdate(); // ?? Do I really need to get for update when adding new sessions?
 
         tableChannel.join(player.getClientSessionRef().get());
 
@@ -89,6 +90,7 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
             logger.log(Level.INFO, "{0} enters {1} as player 1", new Object[] { player.getName(), this.getName() });
             tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 1)));
             updateTableAvailabilty();
+            maybeChangeStatusOnAddPlayer();
             return true;
         } else if (player2 == null) {
             player2 = playerRef;
@@ -96,6 +98,7 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
             logger.log(Level.INFO, "{0} enters {1} as player 2", new Object[] { player.getName(), this.getName() });
             tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 2)));
             updateTableAvailabilty();
+            maybeChangeStatusOnAddPlayer();
             return true;
         } else if (player3 == null) {
             player3 = playerRef;
@@ -103,6 +106,7 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
             logger.log(Level.INFO, "{0} enters {1} as player 3", new Object[] { player.getName(), this.getName() });
             tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 3)));
             updateTableAvailabilty();
+            maybeChangeStatusOnAddPlayer();
             return true;
         } else if (player4 == null) {
             player4 = playerRef;
@@ -110,6 +114,7 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
             logger.log(Level.INFO, "{0} enters {1} as player 4", new Object[] { player.getName(), this.getName() });
             tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 4)));
             updateTableAvailabilty();
+            maybeChangeStatusOnAddPlayer();
             return true;
         } else {
             // Theoretically, this should never happen as the tableAvailability
@@ -145,18 +150,22 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
         if (playerRef.equals(player1)) {
             player1 = null;
             setTableAvailable(true);
+            maybeChangeStatusOnRemovePlayer();
             return true;
         } else if (playerRef.equals(player2)) {
             player2 = null;
             setTableAvailable(true);
+            maybeChangeStatusOnRemovePlayer();
             return true;
         } else if (playerRef.equals(player3)) {
             player3 = null;
             setTableAvailable(true);
+            maybeChangeStatusOnRemovePlayer();
             return true;
         } else if (playerRef.equals(player4)) {
             player4 = null;
             setTableAvailable(true);
+            maybeChangeStatusOnRemovePlayer();
             return true;
         } else {
             logger.log(Level.SEVERE, "player " + player.getName() + " doesn't appear to be one of this table!");
@@ -182,7 +191,59 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
         return getName().hashCode();
     }
 
+
+    private void maybeChangeStatusOnAddPlayer() {
+        if (getPlayerCount() == 1) {
+            logger.log(Level.INFO, "Just one player, set status to awaiting more players.");
+            setCurrentStatus(TableStatus.AWAITING_MORE_PLAYERS);
+        } else if (getPlayerCount() == 2) {
+            // We have two players, so we must have had only one before... Start
+            // the game!
+            logger.log(Level.INFO, "Two players. Update status to waiting to play!");
+            setCurrentStatus(TableStatus.WAITING_FOR_PLAYER_ROLL);
+        }
+    }
+
+    private void maybeChangeStatusOnRemovePlayer() {
+        if (getPlayerCount() == 0) {
+            // No players left set table to empty
+            logger.log(Level.INFO, "No players left. Setting status to empty");
+            setCurrentStatus(TableStatus.EMPTY);
+        } else if (getPlayerCount() == 1) {
+            // Down to one player. Oh dear. Set status to awaiting more players
+            logger.log(Level.INFO, "Just one player. Setting status to waiting");
+            setCurrentStatus(TableStatus.AWAITING_MORE_PLAYERS);
+        }
+    }
+
     public void receivedMessage(Channel channel, ClientSession sender, ByteBuffer message) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * @return the currentStatus
+     */
+    public TableStatus getCurrentStatus() {
+        return currentStatus;
+    }
+
+    /**
+     * @param currentStatus the currentStatus to set
+     */
+    public void setCurrentStatus(TableStatus currentStatus) {
+        AppContext.getDataManager().markForUpdate(this);
+        logger.log(Level.INFO, "Setting status of " + getName() + " to " + currentStatus);
+        this.currentStatus = currentStatus;
+    }
+
+    public int getPlayerCount() {
+        int playerCount = 0;
+
+        if (player1 != null) { playerCount++; }
+        if (player2 != null) { playerCount++; }
+        if (player3 != null) { playerCount++; }
+        if (player4 != null) { playerCount++; }
+
+        return playerCount;
     }
 }
