@@ -81,48 +81,34 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
         AppContext.getDataManager().markForUpdate(this);
         Channel tableChannel = tableChannelRef.getForUpdate(); // ?? Do I really need to get for update when adding new sessions?
 
-        tableChannel.join(player.getClientSessionRef().get());
+        int playerId = 0;
 
-        // this logic needs condensing.
         if (player1Ref == null) {
             player1Ref = playerRef;
-            player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
-            logger.log(Level.INFO, "{0} enters {1} as player 1", new Object[] { player.getName(), this.getName() });
-            tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 1)));
-            updateTableAvailabilty();
-            maybeChangeStatusOnAddPlayer();
-            return true;
+            playerId = 1;
         } else if (player2Ref == null) {
             player2Ref = playerRef;
-            player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
-            logger.log(Level.INFO, "{0} enters {1} as player 2", new Object[] { player.getName(), this.getName() });
-            tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 2)));
-            updateTableAvailabilty();
-            maybeChangeStatusOnAddPlayer();
-            return true;
+            playerId = 2;
         } else if (player3Ref == null) {
             player3Ref = playerRef;
-            player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
-            logger.log(Level.INFO, "{0} enters {1} as player 3", new Object[] { player.getName(), this.getName() });
-            tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 3)));
-            updateTableAvailabilty();
-            maybeChangeStatusOnAddPlayer();
-            return true;
+            playerId = 3;
         } else if (player4Ref == null) {
             player4Ref = playerRef;
-            player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
-            logger.log(Level.INFO, "{0} enters {1} as player 4", new Object[] { player.getName(), this.getName() });
-            tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 4)));
-            updateTableAvailabilty();
-            maybeChangeStatusOnAddPlayer();
-            return true;
+            playerId = 4;
         } else {
             // Theoretically, this should never happen as the tableAvailability
             // won't let players in if the table is full.
-            logger.log(Level.WARNING, "Not sure how, but a player has tried to join a table with no free spaces!");
-            tableChannel.leave(player.getClientSessionRef().get());
+            logger.log(Level.SEVERE, "Not sure how, but a player has tried to join a table with no free spaces!");
             return false;
         }
+
+        tableChannel.join(player.getClientSessionRef().get());
+        player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
+        logger.log(Level.INFO, "{0} enters {1} as player " + playerId, new Object[]{player.getName(), this.getName()});
+        tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), playerId)));
+        updateTableAvailabilty();
+        maybeChangeStatusOnAddPlayer();
+        return true;
     }
 
     private void updateTableAvailabilty() {
@@ -149,28 +135,20 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
 
         if (playerRef.equals(player1Ref)) {
             player1Ref = null;
-            setTableAvailable(true);
-            maybeChangeStatusOnRemovePlayer();
-            return true;
         } else if (playerRef.equals(player2Ref)) {
             player2Ref = null;
-            setTableAvailable(true);
-            maybeChangeStatusOnRemovePlayer();
-            return true;
         } else if (playerRef.equals(player3Ref)) {
             player3Ref = null;
-            setTableAvailable(true);
-            maybeChangeStatusOnRemovePlayer();
-            return true;
         } else if (playerRef.equals(player4Ref)) {
             player4Ref = null;
-            setTableAvailable(true);
-            maybeChangeStatusOnRemovePlayer();
-            return true;
         } else {
             logger.log(Level.SEVERE, "player " + player.getName() + " doesn't appear to be one of this table!");
             return false;
         }
+
+        setTableAvailable(true);
+        maybeChangeStatusOnRemovePlayer();
+        return true;
     }
 
     @Override
