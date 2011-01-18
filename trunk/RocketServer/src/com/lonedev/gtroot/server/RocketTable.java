@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  */
 public class RocketTable extends RocketManagedObject implements ChannelListener {
     private static final Logger logger = Logger.getLogger(RocketTable.class.getName());
-    ManagedReference<RocketPlayer> player1, player2, player3, player4, currentPlayer;
+    ManagedReference<RocketPlayer> player1Ref, player2Ref, player3Ref, player4Ref, currentPlayerRef;
     private int tableId;
     private TableStatus currentStatus;
     private boolean tableAvailable = true;
@@ -84,32 +84,32 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
         tableChannel.join(player.getClientSessionRef().get());
 
         // this logic needs condensing.
-        if (player1 == null) {
-            player1 = playerRef;
+        if (player1Ref == null) {
+            player1Ref = playerRef;
             player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
             logger.log(Level.INFO, "{0} enters {1} as player 1", new Object[] { player.getName(), this.getName() });
             tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 1)));
             updateTableAvailabilty();
             maybeChangeStatusOnAddPlayer();
             return true;
-        } else if (player2 == null) {
-            player2 = playerRef;
+        } else if (player2Ref == null) {
+            player2Ref = playerRef;
             player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
             logger.log(Level.INFO, "{0} enters {1} as player 2", new Object[] { player.getName(), this.getName() });
             tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 2)));
             updateTableAvailabilty();
             maybeChangeStatusOnAddPlayer();
             return true;
-        } else if (player3 == null) {
-            player3 = playerRef;
+        } else if (player3Ref == null) {
+            player3Ref = playerRef;
             player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
             logger.log(Level.INFO, "{0} enters {1} as player 3", new Object[] { player.getName(), this.getName() });
             tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 3)));
             updateTableAvailabilty();
             maybeChangeStatusOnAddPlayer();
             return true;
-        } else if (player4 == null) {
-            player4 = playerRef;
+        } else if (player4Ref == null) {
+            player4Ref = playerRef;
             player.setMyCurrentTable(AppContext.getDataManager().createReference(this));
             logger.log(Level.INFO, "{0} enters {1} as player 4", new Object[] { player.getName(), this.getName() });
             tableChannel.send(Utils.encodeString(ClientServerMessageInteractor.createTableJoinSuccessMessage(player.getName(), 4)));
@@ -126,7 +126,7 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
     }
 
     private void updateTableAvailabilty() {
-        if (player1 != null && player2 != null && player3 != null && player4 != null) {
+        if (player1Ref != null && player2Ref != null && player3Ref != null && player4Ref != null) {
             logger.log(Level.INFO, getName() + " is now full!!");
             setTableAvailable(false);
         } else {
@@ -147,23 +147,23 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
         // not create another reference if one already exists.
         ManagedReference<RocketPlayer> playerRef = AppContext.getDataManager().createReference(player);
 
-        if (playerRef.equals(player1)) {
-            player1 = null;
+        if (playerRef.equals(player1Ref)) {
+            player1Ref = null;
             setTableAvailable(true);
             maybeChangeStatusOnRemovePlayer();
             return true;
-        } else if (playerRef.equals(player2)) {
-            player2 = null;
+        } else if (playerRef.equals(player2Ref)) {
+            player2Ref = null;
             setTableAvailable(true);
             maybeChangeStatusOnRemovePlayer();
             return true;
-        } else if (playerRef.equals(player3)) {
-            player3 = null;
+        } else if (playerRef.equals(player3Ref)) {
+            player3Ref = null;
             setTableAvailable(true);
             maybeChangeStatusOnRemovePlayer();
             return true;
-        } else if (playerRef.equals(player4)) {
-            player4 = null;
+        } else if (playerRef.equals(player4Ref)) {
+            player4Ref = null;
             setTableAvailable(true);
             maybeChangeStatusOnRemovePlayer();
             return true;
@@ -239,10 +239,10 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
     public int getPlayerCount() {
         int playerCount = 0;
 
-        if (player1 != null) { playerCount++; }
-        if (player2 != null) { playerCount++; }
-        if (player3 != null) { playerCount++; }
-        if (player4 != null) { playerCount++; }
+        if (player1Ref != null) { playerCount++; }
+        if (player2Ref != null) { playerCount++; }
+        if (player3Ref != null) { playerCount++; }
+        if (player4Ref != null) { playerCount++; }
 
         return playerCount;
     }
