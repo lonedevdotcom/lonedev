@@ -29,6 +29,7 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
     public RocketPlayer(ClientSession clientSession) {
         super(clientSession.getName());
         this.clientSessionRef = AppContext.getDataManager().createReference(clientSession);
+        ServerUtils.getInstance().addServerChatChannelSession(clientSession);
         logger.log(Level.INFO, "New RocketPlayer instance for " + getName() + " created");
     }
 
@@ -80,6 +81,9 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
             RocketTable tableRef = getMyCurrentTableRef().getForUpdate();
             tableRef.removePlayer(this);
         }
+
+        // Also remove them from the server chat channel
+        ServerUtils.getInstance().removeServerChatChannelSession(clientSessionRef.get());
 
         AppContext.getDataManager().removeObject(this);
     }
