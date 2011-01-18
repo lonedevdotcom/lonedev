@@ -1,16 +1,13 @@
 package com.lonedev.gtroot.server;
 
-import com.lonedev.gtroot.shared.RocketModule;
 import com.lonedev.gtroot.shared.ClientServerMessageInteractor;
+import com.lonedev.gtroot.shared.TableStatus;
 import com.lonedev.gtroot.shared.Utils;
 import com.sun.sgs.app.AppContext;
 import com.sun.sgs.app.ClientSession;
 import com.sun.sgs.app.ClientSessionListener;
 import com.sun.sgs.app.ManagedReference;
-import java.awt.Color;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -78,12 +75,14 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
         // playing one). Man, I am getting pretty tired of these references
         // bouncing about.
         if (getMyCurrentTableRef() != null) {
-            RocketTable tableRef = getMyCurrentTableRef().getForUpdate();
-            tableRef.removePlayer(this);
+            RocketTable currentTable = getMyCurrentTableRef().get();
+            currentTable.removePlayer(this);
         }
 
         // Also remove them from the server chat channel
-        ServerUtils.getInstance().removeServerChatChannelSession(clientSessionRef.get());
+        // NOT REQUIRED - THE SESSION IS AUTOMATICALLY REMOVED FROM ALL
+        // CHANNELS ON DISCONNECT. RUNNING THIS WILL THROW AN EXCEPTION.
+//        ServerUtils.getInstance().removeServerChatChannelSession(clientSessionRef.get());
 
         AppContext.getDataManager().removeObject(this);
     }
@@ -102,8 +101,11 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
         
         String messageBody = decodedMessage.substring(5); // The rest of the message
         switch (messageType) {
-            case(ClientServerMessageInteractor.JOIN_TABLE) :
+            case ClientServerMessageInteractor.JOIN_TABLE :
                 joinTable();
+                break;
+            case ClientServerMessageInteractor.TABLE_STATUS_REQUEST :
+                sendCurrentTableStatusToClientSession();
                 break;
             default:
                 throw new RuntimeException("Unsupported message type (" + messageType + ")");
@@ -142,6 +144,15 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
      */
     public void setClientSessionRef(ManagedReference<ClientSession> clientSessionRef) {
         this.clientSessionRef = clientSessionRef;
+    }
+
+    private void sendCurrentTableStatusToClientSession() {
+        if (myCurrentTableRef != null) {
+            TableStatus status = myCurrentTableRef.get().getCurrentStatus();
+            clientSessionRef.get().send(Utils.encodeString(status.toString()));
+        } else {
+            clientSessionRef.get().send(Utils.encodeString("NO_TABLE!!"));
+        }
     }
 
 }
