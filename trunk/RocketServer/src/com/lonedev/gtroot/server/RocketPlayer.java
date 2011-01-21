@@ -107,6 +107,12 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
             case ClientServerMessageInteractor.TABLE_STATUS_REQUEST :
                 sendCurrentTableStatusToClientSession();
                 break;
+            case ClientServerMessageInteractor.ROLL_DICE_REQUEST :
+                processRollDiceRequest();
+                break;
+            case ClientServerMessageInteractor.PLAYER_ROLL_RESPONSE :
+                processRollResponse(messageBody);
+                break;
             default:
                 throw new RuntimeException("Unsupported message type (" + messageType + ")");
         }
@@ -149,9 +155,32 @@ public class RocketPlayer extends RocketManagedObject implements ClientSessionLi
     private void sendCurrentTableStatusToClientSession() {
         if (myCurrentTableRef != null) {
             TableStatus status = myCurrentTableRef.get().getCurrentStatus();
-            clientSessionRef.get().send(Utils.encodeString(status.toString()));
+            RocketPlayer currentPlayer = myCurrentTableRef.get().getCurrentPlayer();
+            clientSessionRef.get().send(Utils.encodeString("TABLE_STATUS:" + status.toString() + ":" + currentPlayer));
         } else {
-            clientSessionRef.get().send(Utils.encodeString("NO_TABLE!!"));
+            logger.log(Level.SEVERE, "Player " + getName() + " attempting to get a table status, but not assigned one!");
+            clientSessionRef.get().send(Utils.encodeString("TABLE_STATUS:UNASSIGNED:null"));
+        }
+    }
+
+    /**
+     * This method sends the request to the table to roll the dice. The results
+     * are published back on the table channel for all to see, so nothing much
+     * to do here.
+     */
+    private void processRollDiceRequest() {
+        if (myCurrentTableRef != null) {
+            myCurrentTableRef.get().processPlayerDiceRollRequest(this);
+        } else {
+            logger.log(Level.SEVERE, "Player " + getName() + " is attempting to roll the dice, but is not assigned a table!");
+        }
+    }
+
+    private void processRollResponse(String messageBody) {
+        if (myCurrentTableRef != null) {
+            myCurrentTableRef.get().processPlayerResponse(this, messageBody);
+        } else {
+            logger.log(Level.SEVERE, "Player " + getName() + " is attempting to send responses to a roll, but is not assigned a table!");
         }
     }
 

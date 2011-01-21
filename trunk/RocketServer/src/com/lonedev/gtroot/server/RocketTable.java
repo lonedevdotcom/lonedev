@@ -25,22 +25,23 @@ import java.util.logging.Logger;
 public class RocketTable extends RocketManagedObject implements ChannelListener {
     private static final Logger logger = Logger.getLogger(RocketTable.class.getName());
     ManagedReference<RocketPlayer> player1Ref, player2Ref, player3Ref, player4Ref, currentPlayerRef;
-    private int tableId;
     private TableStatus currentStatus;
     private boolean tableAvailable = true;
-    private byte currentDiceRoll;
-    Random diceRandom = new Random();
     ManagedReference<Channel> tableChannelRef;
+    private GameEngine gameEngine;
 
     private static final long serialVersionUID = 1L;
 
     public RocketTable(int tableId) {
         super("Table" + tableId);
-        this.tableId = tableId;
         
         Channel tableChannel = AppContext.getChannelManager().createChannel(getName() + "-channel", this, Delivery.RELIABLE);
         tableChannelRef = AppContext.getDataManager().createReference(tableChannel);
 
+        // For now, use the ONLY GameEngine instance (RocketGameEngine). Can
+        // make this a bit smarter later...
+        // gameEngine = new RocketGameEngine();
+        
         setCurrentStatus(TableStatus.EMPTY);
     }
 
@@ -56,25 +57,6 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
         }
     }
 
-    /**
-     * @return the currentDiceRoll
-     */
-    public byte getCurrentDiceRoll() {
-        return currentDiceRoll;
-    }
-
-    public void rollDice() {
-        int nextRoll = diceRandom.nextInt(6);
-        setCurrentDiceRoll((byte)nextRoll);
-    }
-
-    /**
-     * @param currentDiceRoll the currentDiceRoll to set
-     */
-    public void setCurrentDiceRoll(byte currentDiceRoll) {
-        AppContext.getDataManager().markForUpdate(this);
-        this.currentDiceRoll = currentDiceRoll;
-    }
 
     public boolean addPlayer(RocketPlayer player) {
         ManagedReference<RocketPlayer> playerRef = AppContext.getDataManager().createReference(player);
@@ -205,6 +187,10 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
         return currentStatus;
     }
 
+    public RocketPlayer getCurrentPlayer() {
+        return currentPlayerRef.get();
+    }
+
     /**
      * @param currentStatus the currentStatus to set
      */
@@ -223,5 +209,21 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
         if (player4Ref != null) { playerCount++; }
 
         return playerCount;
+    }
+
+    public void processPlayerDiceRollRequest(RocketPlayer player) {
+        // PSEUDO-CODE
+        //      Check that the current status is AWAITING_PLAYER_ROLL
+        //      Check that the player that sent this request matches the current player
+        //      Roll the dice
+        //      Set status to WAITING_FOR_PLAYER_ROLL_RESPONSE
+        //      Send roll information out to channel for all to see (and update)
+        throw new UnsupportedOperationException("MUST DO THIS!");
+    }
+
+    public void processPlayerResponse(RocketPlayer player, String responseString) {
+        // PSEUDO-CODE
+        //      Check that we are AWAITING_PLAYER_RESPONSE
+        throw new UnsupportedOperationException("MUST DO THIS!");
     }
 }
