@@ -23,8 +23,7 @@ public class DesEncrypter {
         try {
             // Create the key
             KeySpec keySpec = new PBEKeySpec(passPhrase.toCharArray(), salt, 19);
-            SecretKey key = SecretKeyFactory.getInstance(
-                "PBEWithMD5AndDES").generateSecret(keySpec);
+            SecretKey key = SecretKeyFactory.getInstance("PBEWithMD5AndDES").generateSecret(keySpec);
             ecipher = Cipher.getInstance(key.getAlgorithm());
             dcipher = Cipher.getInstance(key.getAlgorithm());
 

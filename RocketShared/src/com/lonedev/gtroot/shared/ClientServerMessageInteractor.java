@@ -7,6 +7,8 @@ public class ClientServerMessageInteractor {
     public static final int JOIN_TABLE = 1;
     public static final int PLAYER_JOINED_TABLE = 2;
     public static final int TABLE_STATUS_REQUEST = 3;
+    public static final int ROLL_DICE_REQUEST = 4;
+    public static final int PLAYER_ROLL_RESPONSE = 5;
     
     private static Format numberFormat = new DecimalFormat("00000");
 
