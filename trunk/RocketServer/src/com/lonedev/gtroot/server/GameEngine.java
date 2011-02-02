@@ -30,7 +30,9 @@ public interface GameEngine {
 
     /**
      * Returns a string with the current game status (ie scores). This is passed
-     * directly back on the tables channel.
+     * directly back on the tables channel. NOTE: Game Status is not the same as
+     * table status. Table status says what it's waiting for. Game status is the
+     * scores.
      */
     public String getGameStatus();
 }

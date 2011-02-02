@@ -10,7 +10,7 @@ import com.sun.sgs.app.ClientSession;
 import com.sun.sgs.app.Delivery;
 import com.sun.sgs.app.ManagedReference;
 import java.nio.ByteBuffer;
-import java.util.Random;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,7 +40,7 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
 
         // For now, use the ONLY GameEngine instance (RocketGameEngine). Can
         // make this a bit smarter later...
-        // gameEngine = new RocketGameEngine();
+         gameEngine = new RocketGameEngine(this);
         
         setCurrentStatus(TableStatus.EMPTY);
     }
@@ -177,7 +177,7 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
     }
 
     public void receivedMessage(Channel channel, ClientSession sender, ByteBuffer message) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        logger.log(Level.SEVERE, getName() + " received message from " + sender.getName() + ". This should not be possible. This channel is outgoing only.");
     }
 
     /**
@@ -216,7 +216,14 @@ public class RocketTable extends RocketManagedObject implements ChannelListener 
         //      Check that the current status is AWAITING_PLAYER_ROLL
         //      Check that the player that sent this request matches the current player
         //      Roll the dice
+        gameEngine.processRollRequest(player);
+
+        String gameStatus = gameEngine.getGameStatus();
+        // The game status should include the dice roll...
+
         //      Set status to WAITING_FOR_PLAYER_ROLL_RESPONSE
+        setCurrentStatus(TableStatus.WAITING_FOR_PLAYER_ROLL_RESPONSE);
+
         //      Send roll information out to channel for all to see (and update)
         throw new UnsupportedOperationException("MUST DO THIS!");
     }
