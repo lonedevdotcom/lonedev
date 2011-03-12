@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, ProfileExplorer!</string>
+    
+    <string name="app_name">Andro FTP Sync</string>
+    <string name="ftpHostnameString">FTP Hostname</string>
+    <string name="ftpUsernameString">FTP Username</string>
+    <string name="ftpPasswordString">FTP Password</string>
+    <string name="TestFTPConnectionString">Test</string>
+    <string name="profileNameString">Profile Name</string>
+    <string name="createNewProfileString">+ Click here to create new profile</string>
+    <string name="profileSettingsString">Profile Settings</string>
+    
+</resources>
