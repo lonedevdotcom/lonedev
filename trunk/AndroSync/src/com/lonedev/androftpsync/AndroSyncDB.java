@@ -29,7 +29,6 @@ public class AndroSyncDB extends SQLiteOpenHelper {
 
 	private void createFolderSynchTable(SQLiteDatabase db) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public final String CREATE_PROFILE_TABLE_SQL =
