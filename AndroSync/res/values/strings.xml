@@ -9,6 +9,8 @@
     <string name="TestFTPConnectionString">Test</string>
     <string name="profileNameString">Profile Name</string>
     <string name="createNewProfileString">+ Click here to create new profile</string>
-    <string name="profileSettingsString">Profile Settings</string>
+    <string name="profileSettingsString">Settings</string>
+    <string name="profileFoldersSyncString">Folders</string>
+    <string name="profileScheduleString">Schedule</string>
     
 </resources>
