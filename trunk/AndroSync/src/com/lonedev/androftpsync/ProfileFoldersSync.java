@@ -2,16 +2,20 @@ package com.lonedev.androftpsync;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
 public class ProfileFoldersSync extends Activity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        TextView textview = new TextView(this);
-        textview.setText("This is the folder synch tab");
-        setContentView(textview);
+        setContentView(R.layout.profile_folders);
+        
+        createFolderSyncIndex();
+    }
+    
+    private void createFolderSyncIndex() {
+    	LinearLayout folderSyncsLayout = (LinearLayout)findViewById(R.id.folderSyncsLayout);
+    	folderSyncsLayout.addView(new ProfileFoldersSyncItem(this));
     }
 }

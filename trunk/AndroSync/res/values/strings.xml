@@ -12,5 +12,8 @@
     <string name="profileSettingsString">Settings</string>
     <string name="profileFoldersSyncString">Folders</string>
     <string name="profileScheduleString">Schedule</string>
-    
+    <string name="profileLocalFolderPathString">Local Path</string>
+    <string name="profileRemoteFolderPathString">Remote Path</string>
+    <string name="profileRemoveFolderSyncString">Remove</string>
+
 </resources>
