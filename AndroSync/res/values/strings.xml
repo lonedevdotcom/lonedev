@@ -15,5 +15,8 @@
     <string name="profileLocalFolderPathString">Local Path</string>
     <string name="profileRemoteFolderPathString">Remote Path</string>
     <string name="profileRemoveFolderSyncString">Remove</string>
+    <string name="fileIncludePatternString">Includes</string>
+    <string name="fileExcludePatternString">Excludes</string>
+    <string name="addFolderButtonString">Add Folder</string>
 
 </resources>
