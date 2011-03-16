@@ -13,8 +13,11 @@ import android.view.ViewGroup;
 
 public class ProfileFoldersSyncItem extends TableLayout implements OnClickListener {
 
-	public ProfileFoldersSyncItem(Context context) {
+	private ViewGroup parentView;
+	
+	public ProfileFoldersSyncItem(Context context, ViewGroup parentView) {
 		super(context);
+		this.parentView = parentView;
 		this.setColumnStretchable(1, true);
 		init();
 	}
@@ -46,12 +49,33 @@ public class ProfileFoldersSyncItem extends TableLayout implements OnClickListen
 		row2.addView(remoteFolderEditText);
 		
 		this.addView(row2);
+		
+		TableRow row3 = new TableRow(getContext());
+		
+		TextView includePatternTextView = new TextView(getContext());
+		includePatternTextView.setText(R.string.fileIncludePatternString);
+		row3.addView(includePatternTextView);
+		
+		EditText includePatternEditText = new EditText(getContext());
+		includePatternEditText.setText("*");
+		row3.addView(includePatternEditText);
+		
+		this.addView(row3);
+		
+		TableRow row4 = new TableRow(getContext());
+		
+		TextView excludePatternTextView = new TextView(getContext());
+		excludePatternTextView.setText(R.string.fileExcludePatternString);
+		row4.addView(excludePatternTextView);
+		
+		EditText excludePatternEditText = new EditText(getContext());
+		row4.addView(excludePatternEditText);
+		
+		this.addView(row4);
 	}
 
 	@Override
 	public void onClick(View view) {
-		this.getRootView();
-		view.refreshDrawableState();
-		//
+		parentView.removeView(this);
 	}
 }

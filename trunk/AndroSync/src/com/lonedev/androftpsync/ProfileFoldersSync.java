@@ -16,6 +16,6 @@ public class ProfileFoldersSync extends Activity {
     
     private void createFolderSyncIndex() {
     	LinearLayout folderSyncsLayout = (LinearLayout)findViewById(R.id.folderSyncsLayout);
-    	folderSyncsLayout.addView(new ProfileFoldersSyncItem(this));
+    	folderSyncsLayout.addView(new ProfileFoldersSyncItem(this, folderSyncsLayout));
     }
 }
