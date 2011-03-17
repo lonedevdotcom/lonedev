@@ -2,67 +2,57 @@
 <ScrollView
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent"
-  android:layout_height="fill_parent">
+  android:layout_height="fill_parent"
+  >
   
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    	android:orientation="vertical"
+	<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     	android:layout_width="fill_parent"
-    	android:layout_height="fill_parent">
+    	android:layout_height="fill_parent"
+    	android:stretchColumns="1">
     	
+    	<TableRow>
 		<TextView  
-			android:layout_width="fill_parent" 
-			android:layout_height="wrap_content" 
 			android:text="@string/profileNameString"
 		/>
 		<EditText
 			android:id="@+id/profileName"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
 		/>
+		</TableRow>
 	
+		<TableRow>
 		<TextView  
-    		android:layout_width="fill_parent" 
-    		android:layout_height="wrap_content"
-    		android:paddingTop="10px" 
     		android:text="@string/ftpHostnameString"
     	/>
 		<EditText
 			android:id="@+id/ftpHostname"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
 		/>
-	
+		</TableRow>
+		
+		<TableRow>
 		<TextView  
-    		android:layout_width="fill_parent" 
-    		android:layout_height="wrap_content"
-    		android:paddingTop="10px"
     		android:text="@string/ftpUsernameString"
     	/>
 		<EditText
 			android:id="@+id/ftpUsername"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
 		/>
+		</TableRow>
 		
+		<TableRow>
 		<TextView  
-    		android:layout_width="fill_parent" 
-    		android:layout_height="wrap_content"
-    		android:paddingTop="10px" 
     		android:text="@string/ftpPasswordString"
     	/>
 		<EditText
 			android:id="@+id/ftpPassword"
 			android:password="true"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
 		/>
+		</TableRow>
 	
+		<TableRow>
 		<Button 
 			android:text="@string/TestFTPConnectionString" 
 			android:id="@+id/testFTPButton" 
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"
 		/>
+		</TableRow>
 			
-	</LinearLayout>
+	</TableLayout>
 </ScrollView>

@@ -23,7 +23,7 @@ public class ProfileExplorer extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		Intent intent = new Intent(this, ProfileSettings.class);
+		Intent intent = new Intent(this, ProfileTabActivity.class);
 		startActivity(intent);
 	}
 }
