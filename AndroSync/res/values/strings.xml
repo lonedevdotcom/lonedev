@@ -2,6 +2,8 @@
 <resources>
     <string name="hello">Hello World, ProfileExplorer!</string>
     
+    <string name="saveProfileButtonString">Save Profile</string>
+    <string name="syncNowButtonString">Sync Now</string>
     <string name="app_name">Andro FTP Sync</string>
     <string name="ftpHostnameString">FTP Hostname</string>
     <string name="ftpUsernameString">FTP Username</string>
@@ -18,5 +20,6 @@
     <string name="fileIncludePatternString">Includes</string>
     <string name="fileExcludePatternString">Excludes</string>
     <string name="addFolderButtonString">Add Folder</string>
+    <string name="folderRemoveDeniedBecauseLastOneString">You need at least one folder sync\nor you will have nothing to do!</string>
 
 </resources>
