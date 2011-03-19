@@ -6,6 +6,7 @@
     <string name="syncNowButtonString">Sync Now</string>
     <string name="app_name">Andro FTP Sync</string>
     <string name="ftpHostnameString">FTP Hostname</string>
+    <string name="ftpPortString">FTP Port</string>
     <string name="ftpUsernameString">FTP Username</string>
     <string name="ftpPasswordString">FTP Password</string>
     <string name="TestFTPConnectionString">Test</string>
@@ -20,6 +21,9 @@
     <string name="fileIncludePatternString">Includes</string>
     <string name="fileExcludePatternString">Excludes</string>
     <string name="addFolderButtonString">Add Folder</string>
+    <string name="testFTPSuccessString">SUCCESS: Connection succeeded</string>
+    <string name="testFTPFailString">FAIL: </string>
+    <string name="testFTPConnectionDeniedString">FAIL: FTP server refused connection</string>
     <string name="folderRemoveDeniedBecauseLastOneString">You need at least one folder sync\nor you will have nothing to do!</string>
 
 </resources>

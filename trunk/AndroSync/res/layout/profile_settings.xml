@@ -30,6 +30,16 @@
 		
 		<TableRow>
 		<TextView  
+    		android:text="@string/ftpPortString"
+    	/>
+		<EditText
+			android:id="@+id/ftpPort"
+			android:text="21"
+		/>
+		</TableRow>
+		
+		<TableRow>
+		<TextView  
     		android:text="@string/ftpUsernameString"
     	/>
 		<EditText

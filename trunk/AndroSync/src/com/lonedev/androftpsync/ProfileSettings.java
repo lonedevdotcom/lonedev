@@ -9,6 +9,7 @@ import org.apache.commons.net.ftp.FTPReply;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -16,6 +17,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class ProfileSettings extends Activity implements OnClickListener {
+	private static final String TAG = "ProfileSettings";
+	
 	Logger logger = Logger.getLogger(ProfileSettings.class.toString());
 	
     /** Called when the activity is first created. */
@@ -36,7 +39,7 @@ public class ProfileSettings extends Activity implements OnClickListener {
 		
 		String result = "NOTHING??";
 		
-		logger.log(Level.INFO, "Attempting to login to...");
+		Log.i(TAG, "Test attempt login to " + ftpHostname + " as " + ftpUsername);
 
 		FTPClient ftpClient = new FTPClient();
 		
@@ -47,12 +50,15 @@ public class ProfileSettings extends Activity implements OnClickListener {
 			int reply = ftpClient.getReplyCode();
 
 			if (!FTPReply.isPositiveCompletion(reply)) {
-				result = "FAIL: FTP server refused connection.";
+				result = getString(R.string.testFTPConnectionDeniedString);
+				Log.w(TAG, result);
 			} else {
-				result = "SUCCESS !!";
+				result = getString(R.string.testFTPSuccessString);
+				Log.i(TAG, result);
 			}
 		} catch (Exception ex) {
-			result = "FAIL: " + ex;
+			result = getString(R.string.testFTPFailString) + ex;
+			Log.w(TAG, result);
 		} finally {
 			try {
 				ftpClient.disconnect();
