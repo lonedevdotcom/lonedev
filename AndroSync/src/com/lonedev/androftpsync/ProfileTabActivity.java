@@ -3,6 +3,8 @@ package com.lonedev.androftpsync;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
@@ -39,5 +41,12 @@ public class ProfileTabActivity extends TabActivity {
         tabHost.addTab(settingTabSpec);
         tabHost.addTab(foldersSyncTabSpec);
         tabHost.addTab(scheduleTabSpec);
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    	MenuInflater inflater = getMenuInflater();
+    	inflater.inflate(R.menu.profile_menu, menu);
+    	return true;
     }
 }
