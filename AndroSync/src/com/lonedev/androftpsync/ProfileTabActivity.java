@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
@@ -16,6 +19,8 @@ import android.widget.TabHost.TabSpec;
  * @author Richard Hawkes
  */
 public class ProfileTabActivity extends TabActivity {
+	private Intent profileSettingsIntent, profileFoldersSyncIntent, profileScheduleIntent;
+	
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,9 +38,17 @@ public class ProfileTabActivity extends TabActivity {
         TabSpec foldersSyncTabSpec = tabHost.newTabSpec(foldersSyncString);
         TabSpec scheduleTabSpec = tabHost.newTabSpec(scheduleString);
         
-        settingTabSpec.setIndicator(settingsString).setContent(new Intent(this,ProfileSettings.class));
-        foldersSyncTabSpec.setIndicator(foldersSyncString).setContent(new Intent(this,ProfileFoldersSync.class));
-        scheduleTabSpec.setIndicator(scheduleString).setContent(new Intent(this,ProfileSchedule.class));
+        settingTabSpec.setIndicator(settingsString, getResources().getDrawable(R.drawable.profile_settings_tab));
+        profileSettingsIntent = new Intent(this, ProfileSettings.class);
+        settingTabSpec.setContent(profileSettingsIntent);
+        
+        foldersSyncTabSpec.setIndicator(foldersSyncString, getResources().getDrawable(R.drawable.profile_folders_tab));
+        profileFoldersSyncIntent = new Intent(this, ProfileFoldersSync.class);
+        foldersSyncTabSpec.setContent(profileFoldersSyncIntent);
+        
+        scheduleTabSpec.setIndicator(scheduleString, getResources().getDrawable(R.drawable.profile_schedule_tab));
+        profileScheduleIntent = new Intent(this,ProfileSchedule.class);
+        scheduleTabSpec.setContent(profileScheduleIntent);
         
         /** Add tabSpec to the TabHost to display. */
         tabHost.addTab(settingTabSpec);
@@ -49,4 +62,19 @@ public class ProfileTabActivity extends TabActivity {
     	inflater.inflate(R.menu.profile_menu, menu);
     	return true;
     }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+    	if (menuItem.getItemId() == R.id.syncNow) {
+    		startSync();
+    	} 
+		return true;
+    }
+
+	private void startSync() {
+//		FTPUtils ftpUtils = new FTPUtils();
+		View profileSettingsViewGroup = getTabHost().getChildAt(1);
+		profileSettingsViewGroup.bringToFront();
+		return;
+	}
 }

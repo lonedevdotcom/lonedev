@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, ProfileExplorer!</string>
+    <!-- <string name="hello">Hello World, ProfileExplorer!</string> -->
     
     <string name="saveProfileButtonString">Save Profile</string>
     <string name="syncNowButtonString">Sync Now</string>
-    <string name="app_name">Andro FTP Sync</string>
+    <string name="app_name">Andro Sync</string>
     <string name="ftpHostnameString">FTP Hostname</string>
     <string name="ftpPortString">FTP Port</string>
     <string name="ftpUsernameString">FTP Username</string>
