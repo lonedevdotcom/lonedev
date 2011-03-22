@@ -36,6 +36,7 @@ public class ProfileSettings extends Activity implements OnClickListener {
 		String ftpHostname = getFtpHostname();
 		String ftpUsername = getFtpUsername();
 		String ftpPassword = getFtpPassword();
+		int ftpPort = getFtpPort();
 		
 		String result = "NOTHING??";
 		
@@ -44,7 +45,7 @@ public class ProfileSettings extends Activity implements OnClickListener {
 		FTPClient ftpClient = new FTPClient();
 		
 		try {
-			ftpClient.connect(ftpHostname);
+			ftpClient.connect(ftpHostname, ftpPort);
 			ftpClient.login(ftpUsername, ftpPassword);
 
 			int reply = ftpClient.getReplyCode();
@@ -75,16 +76,20 @@ public class ProfileSettings extends Activity implements OnClickListener {
 		toast.show();
 	}
 	
-	private String getFtpHostname() {
+	public String getFtpHostname() {
 		return getEditTextString(R.id.ftpHostname);
 	}
 	
-	private String getFtpUsername() {
+	public String getFtpUsername() {
 		return getEditTextString(R.id.ftpUsername);
 	}
 	
-	private String getFtpPassword() {
+	public String getFtpPassword() {
 		return getEditTextString(R.id.ftpPassword);
+	}
+	
+	public int getFtpPort() {
+		return Integer.parseInt(getEditTextString(R.id.ftpPort));
 	}
 	
 	private String getEditTextString(int id) {
