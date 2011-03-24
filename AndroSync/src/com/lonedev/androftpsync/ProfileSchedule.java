@@ -9,6 +9,10 @@ public class ProfileSchedule extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Let the TabActivity (the parent) know that this is the current
+        // ProfileSchedule instance.
+        ProfileTabActivity.profileSchedule = this;
 
         TextView textview = new TextView(this);
         textview.setText("This is the schedule tab");

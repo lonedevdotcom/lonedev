@@ -1,8 +1,10 @@
 package com.lonedev.androftpsync;
 
+import android.app.Activity;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,7 +21,17 @@ import android.widget.TabHost.TabSpec;
  * @author Richard Hawkes
  */
 public class ProfileTabActivity extends TabActivity {
-	private Intent profileSettingsIntent, profileFoldersSyncIntent, profileScheduleIntent;
+	private String TAG = "ProfileTabActivity";
+	
+	// I cannot for the life of me work out how to get back to the Activity 
+	// instances that this TabActivity creates. Seeing as how this Activity
+	// handles the menu buttons (Save, Sync etc), it needs to be able to get
+	// to these classes data. Therefore, these classes will need to update 
+	// the matching Activity below via its "onCreate(...)" method. Then, when
+	// the user clicks a menu option, this class can reference the fields in
+	// that activity. Crap solution in my book, but until I can find a way to
+	// get to these instances, I'm stuck for cleaner solutions.
+	public static Activity profileSettings, profileFoldersSync, profileSchedule;
 	
 	/** Called when the activity is first created. */
     @Override
@@ -39,15 +51,15 @@ public class ProfileTabActivity extends TabActivity {
         TabSpec scheduleTabSpec = tabHost.newTabSpec(scheduleString);
         
         settingTabSpec.setIndicator(settingsString, getResources().getDrawable(R.drawable.profile_settings_tab));
-        profileSettingsIntent = new Intent(this, ProfileSettings.class);
+        Intent profileSettingsIntent = new Intent(this, ProfileSettings.class);
         settingTabSpec.setContent(profileSettingsIntent);
         
         foldersSyncTabSpec.setIndicator(foldersSyncString, getResources().getDrawable(R.drawable.profile_folders_tab));
-        profileFoldersSyncIntent = new Intent(this, ProfileFoldersSync.class);
+        Intent profileFoldersSyncIntent = new Intent(this, ProfileFoldersSync.class);
         foldersSyncTabSpec.setContent(profileFoldersSyncIntent);
         
         scheduleTabSpec.setIndicator(scheduleString, getResources().getDrawable(R.drawable.profile_schedule_tab));
-        profileScheduleIntent = new Intent(this,ProfileSchedule.class);
+        Intent profileScheduleIntent = new Intent(this,ProfileSchedule.class);
         scheduleTabSpec.setContent(profileScheduleIntent);
         
         /** Add tabSpec to the TabHost to display. */
@@ -72,9 +84,11 @@ public class ProfileTabActivity extends TabActivity {
     }
 
 	private void startSync() {
-//		FTPUtils ftpUtils = new FTPUtils();
-		View profileSettingsViewGroup = getTabHost().getChildAt(1);
-		profileSettingsViewGroup.bringToFront();
-		return;
+		try {
+			SyncTool syncTool = new SyncTool();
+			syncTool.sync();
+		} catch (Exception ex) {
+			Log.e(TAG, "Sync errror: " + ex.toString());
+		}
 	}
 }
