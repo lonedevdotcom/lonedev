@@ -12,10 +12,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+/**
+ * General profile settings activity. 
+ * 
+ * @author Richard Hawkes
+ *
+ */
 public class ProfileSettings extends Activity implements OnClickListener {
 	private static final String TAG = "ProfileSettings";
 	
@@ -25,10 +33,21 @@ public class ProfileSettings extends Activity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Let the TabActivity (the parent) know that this is the current
+        // ProfileSettings instance.
+        ProfileTabActivity.profileSettings = this;
+        
         setContentView(R.layout.profile_settings);
         
         Button testButton = (Button)findViewById(R.id.testFTPButton);
         testButton.setOnClickListener(this);
+        
+        // Convoluted code to make a drop-down box to select the sync direction!!
+        Spinner syncDirectionSpinner = (Spinner)findViewById(R.id.syncDirection);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.syncDirections, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        syncDirectionSpinner.setAdapter(adapter);
     }
 
 	@Override

@@ -15,6 +15,11 @@ public class ProfileFoldersSync extends Activity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Let the TabActivity (the parent) know that this is the current
+        // ProfileFoldersSync instance.
+        ProfileTabActivity.profileFoldersSync = this;
+        
         setContentView(R.layout.profile_folders);
         
         createFolderSyncIndex();

@@ -19,6 +19,14 @@
     <string name="profileRemoteFolderPathString">Remote Path</string>
     <string name="profileRemoveFolderSyncString">Remove</string>
     <string name="fileIncludePatternString">Includes</string>
+    
+    <string name="syncDirectionPrompt">Sync Direction(s)</string>
+    <string-array name="syncDirections">
+        <item>From Phone to Server</item>
+        <item>From Server to Phone</item>
+        <item>Both directions</item>
+    </string-array>
+    
     <string name="fileExcludePatternString">Excludes</string>
     <string name="addFolderButtonString">Add Folder</string>
     <string name="testFTPSuccessString">SUCCESS: Connection succeeded</string>
