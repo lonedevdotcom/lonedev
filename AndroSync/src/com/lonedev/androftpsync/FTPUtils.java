@@ -51,15 +51,23 @@ public class FTPUtils {
 	public void syncToFTPDirectory(File localFolder, File remoteFolder) {
 		List<File> syncLocalFiles = new ArrayList<File>();
 		getFiles(localFolder, syncLocalFiles);
+		Log.d(TAG, "Retrieved " + syncLocalFiles + " local files for syncing");
 	}
 	
 	private void getFiles(File folder, List<File> syncFiles) {
 		File[] folderFiles = folder.listFiles();
 		
+		if (!folder.exists()) {
+			Log.e(TAG, "Folder " + folder.getName() + " does not exist locally.");
+			return;
+		}
+		
 		for (File file : folderFiles) {
 			if (file.isDirectory()) {
+				Log.v(TAG, "File " + file.getName() + " is a directory. Getting it's folders.");
 				getFiles(file, syncFiles);
 			} else if (file.isFile()) {
+				Log.v(TAG, file.getName() + " added to list.");
 				syncFiles.add(file);
 			}
 		}

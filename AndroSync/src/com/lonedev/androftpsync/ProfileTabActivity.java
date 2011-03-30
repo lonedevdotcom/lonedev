@@ -1,5 +1,7 @@
 package com.lonedev.androftpsync;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.app.TabActivity;
 import android.content.Intent;
@@ -31,7 +33,7 @@ public class ProfileTabActivity extends TabActivity {
 	// the user clicks a menu option, this class can reference the fields in
 	// that activity. Crap solution in my book, but until I can find a way to
 	// get to these instances, I'm stuck for cleaner solutions.
-	public static Activity profileSettings, profileFoldersSync, profileSchedule;
+	public static Activity profileSettingsActivity, profileFoldersSyncActivity, profileScheduleActivity;
 	
 	/** Called when the activity is first created. */
     @Override
@@ -66,6 +68,8 @@ public class ProfileTabActivity extends TabActivity {
         tabHost.addTab(settingTabSpec);
         tabHost.addTab(foldersSyncTabSpec);
         tabHost.addTab(scheduleTabSpec);
+        
+        tabHost.setCurrentTab(1);
     }
     
     @Override
@@ -84,9 +88,22 @@ public class ProfileTabActivity extends TabActivity {
     }
 
 	private void startSync() {
+		ProfileSettings ps = (ProfileSettings)profileSettingsActivity;
+		ProfileFoldersSync pfs = (ProfileFoldersSync)profileFoldersSyncActivity;
+		Log.d(TAG, "Sync started");
+		
 		try {
-			SyncTool syncTool = new SyncTool();
-			syncTool.sync();
+			FTPUtils ftpUtils = new FTPUtils(ps.getFtpHostname(), ps.getFtpPort(), ps.getFtpUsername(), ps.getFtpPassword());
+//			ftpUtils.connect();
+			
+			for (ProfileFoldersSyncItem syncItem : pfs.getProfileFoldersSyncItems()) {
+				String localFolderString = syncItem.getLocalFolderText();
+				String remoteFolderString = syncItem.getRemoteFolderText();
+				Log.d(TAG, "Syncing from " + localFolderString + " to " + remoteFolderString);
+				File localFolder = new File(localFolderString);
+				File remoteFolder = new File(remoteFolderString);
+				ftpUtils.syncToFTPDirectory(localFolder, remoteFolder);
+			}
 		} catch (Exception ex) {
 			Log.e(TAG, "Sync errror: " + ex.toString());
 		}

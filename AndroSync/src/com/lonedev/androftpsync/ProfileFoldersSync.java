@@ -18,7 +18,7 @@ public class ProfileFoldersSync extends Activity implements OnClickListener {
         
         // Let the TabActivity (the parent) know that this is the current
         // ProfileFoldersSync instance.
-        ProfileTabActivity.profileFoldersSync = this;
+        ProfileTabActivity.profileFoldersSyncActivity = this;
         
         setContentView(R.layout.profile_folders);
         
@@ -31,6 +31,23 @@ public class ProfileFoldersSync extends Activity implements OnClickListener {
     private void createFolderSyncIndex() {
     	LinearLayout folderSyncsLayout = (LinearLayout)findViewById(R.id.folderSyncsLayout);
     	folderSyncsLayout.addView(new ProfileFoldersSyncItem(this, folderSyncsLayout));
+    }
+    
+    /**
+     * All "children" of the foldersSyncLayout id will be instances of
+     * ProfileFoldersSyncItem's. 
+     * 
+     * @return An array of the folders sync items that the user has added.
+     */
+    public ProfileFoldersSyncItem[] getProfileFoldersSyncItems() {
+    	LinearLayout folderSyncsLayout = (LinearLayout)findViewById(R.id.folderSyncsLayout);
+    	ProfileFoldersSyncItem[] syncItems = new ProfileFoldersSyncItem[folderSyncsLayout.getChildCount()];
+    	
+    	for (int i = 0; i < folderSyncsLayout.getChildCount(); i++) {
+    		syncItems[i] = (ProfileFoldersSyncItem)folderSyncsLayout.getChildAt(i);
+    	}
+    	
+    	return syncItems;
     }
 
 	@Override

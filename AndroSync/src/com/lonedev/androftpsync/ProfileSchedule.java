@@ -12,10 +12,10 @@ public class ProfileSchedule extends Activity {
         
         // Let the TabActivity (the parent) know that this is the current
         // ProfileSchedule instance.
-        ProfileTabActivity.profileSchedule = this;
+        ProfileTabActivity.profileScheduleActivity = this;
 
         TextView textview = new TextView(this);
-        textview.setText("This is the schedule tab");
+        textview.setText(getString(R.string.scheduleFeatureComingSoon));
         setContentView(textview);
     }
 }
