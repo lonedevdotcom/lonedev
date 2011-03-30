@@ -29,9 +29,14 @@
     
     <string name="fileExcludePatternString">Excludes</string>
     <string name="addFolderButtonString">Add Folder</string>
+    <string name="testingFTPConnectionDialogHeaderText">Testing:</string>
     <string name="testFTPSuccessString">SUCCESS: Connection succeeded</string>
     <string name="testFTPFailString">FAIL: </string>
     <string name="testFTPConnectionDeniedString">FAIL: FTP server refused connection</string>
     <string name="folderRemoveDeniedBecauseLastOneString">You need at least one folder sync\nor you will have nothing to do!</string>
+    
+    <string name="scheduleFeatureComingSoon">Schedule feature coming soon!</string>
+    
+    
 
 </resources>

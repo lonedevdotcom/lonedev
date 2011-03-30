@@ -7,6 +7,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,7 +37,7 @@ public class ProfileSettings extends Activity implements OnClickListener {
         
         // Let the TabActivity (the parent) know that this is the current
         // ProfileSettings instance.
-        ProfileTabActivity.profileSettings = this;
+        ProfileTabActivity.profileSettingsActivity = this;
         
         setContentView(R.layout.profile_settings);
         
@@ -56,6 +57,11 @@ public class ProfileSettings extends Activity implements OnClickListener {
 		String ftpUsername = getFtpUsername();
 		String ftpPassword = getFtpPassword();
 		int ftpPort = getFtpPort();
+		
+		String dialogText = getString(R.string.testingFTPConnectionDialogHeaderText) + " " + ftpHostname;
+		
+		// THIS DIALOG HAS STOPPED WORKING!!!
+		ProgressDialog dialog = ProgressDialog.show(this, "", dialogText, true);
 		
 		String result = "NOTHING??";
 		
@@ -81,6 +87,7 @@ public class ProfileSettings extends Activity implements OnClickListener {
 			Log.w(TAG, result);
 		} finally {
 			try {
+				dialog.dismiss();
 				ftpClient.disconnect();
 			} catch (Exception e) {
 				// Doesn't matter if exception gets thrown... At least we tried.
