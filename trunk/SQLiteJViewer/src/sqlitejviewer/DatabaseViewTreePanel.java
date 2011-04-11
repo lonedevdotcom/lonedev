@@ -1,30 +1,20 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * DatabaseViewTreePanel.java
- *
- * Created on 07-Apr-2011, 11:45:28
- */
 package sqlitejviewer;
 
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.*;
 
-/**
- *
- * @author hawkric
- */
 public class DatabaseViewTreePanel extends javax.swing.JPanel {
 
-    DefaultMutableTreeNode top;
+    DefaultTreeModel treeModel;
 
     /** Creates new form DatabaseViewTreePanel */
     public DatabaseViewTreePanel() {
-        createTopLevelNodes();
+        DefaultMutableTreeNode top = new DefaultMutableTreeNode("Database");
+        treeModel = new DefaultTreeModel(top);
+
         initComponents();
+        createTopLevelNodes();
     }
 
     /** This method is called from within the constructor to
@@ -37,7 +27,7 @@ public class DatabaseViewTreePanel extends javax.swing.JPanel {
     private void initComponents() {
 
         databaseViewScrollPane = new javax.swing.JScrollPane();
-        databaseViewTree = new JTree(top);
+        databaseViewTree = new JTree(treeModel);
 
         databaseViewScrollPane.setViewportView(databaseViewTree);
 
@@ -58,7 +48,8 @@ public class DatabaseViewTreePanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void createTopLevelNodes() {
-        top = new DefaultMutableTreeNode("Database");
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode)treeModel.getRoot();
+        root.removeAllChildren();
 
         DefaultMutableTreeNode tablesTreeNode = new DefaultMutableTreeNode();
         int numTables = populateTablesTreeNode(tablesTreeNode);
@@ -76,10 +67,23 @@ public class DatabaseViewTreePanel extends javax.swing.JPanel {
         int numViews = populateViewsTreeNode(viewsTreeNode);
         viewsTreeNode.setUserObject("Views (" + numViews + ")");
 
-        top.add(tablesTreeNode);
-        top.add(indexesTreeNode);
-        top.add(triggersTreeNode);
-        top.add(viewsTreeNode);
+        root.add(tablesTreeNode);
+        root.add(indexesTreeNode);
+        root.add(triggersTreeNode);
+        root.add(viewsTreeNode);
+
+        // We can't just blindly reload new JTrees you know. We have to (apparently)
+        // queue it up for update. Seems to work fine without this invokeLater,
+        // but putting it in there for consistency.
+        try {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    treeModel.reload();
+                }
+            });
+        } catch (Exception ex) {
+            System.err.println("Problem refreshing the database tree: " + ex);
+        }
     }
 
     private int populateTablesTreeNode(DefaultMutableTreeNode tablesTreeNode) {
@@ -140,6 +144,10 @@ public class DatabaseViewTreePanel extends javax.swing.JPanel {
 
     public JTree getDatabaseViewTree() {
         return databaseViewTree;
+    }
+
+    public void refresh() {
+        createTopLevelNodes();
     }
 
     /**

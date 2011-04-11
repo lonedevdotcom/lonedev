@@ -32,7 +32,7 @@
       <SubComponents>
         <Component class="javax.swing.JTree" name="databaseViewTree">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTree(top);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTree(treeModel)"/>
           </AuxValues>
         </Component>
       </SubComponents>
