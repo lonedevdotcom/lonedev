@@ -15,6 +15,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.event.TreeSelectionEvent;
@@ -58,7 +60,6 @@ public class MainFrame extends javax.swing.JFrame {
             individualTablePopupMenu.add(viewDataMenuItem);
             viewDataMenuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    System.out.println("View data!" + databaseViewTreePanel.getSelectedNodesUserObject());
                     DatabaseTableDTO selectedTable = (DatabaseTableDTO)databaseViewTreePanel.getSelectedNodesUserObject();
                     ResultSetDialogBox rsdb = new ResultSetDialogBox(MainFrame.this, true, selectedTable.getName());
                     rsdb.setTitle(selectedTable.getName());
@@ -70,15 +71,12 @@ public class MainFrame extends javax.swing.JFrame {
             databasePopupMenu.add(dumpSchemaMenuItem);
             dumpSchemaMenuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    String dumpResults = MainFrame.dbInteractor.dumpDatabase();
-                    databaseObjectDetailsTextArea.setText(dumpResults);
+                    if (MainFrame.dbInteractor != null) {
+                        String dumpResults = MainFrame.dbInteractor.dumpDatabase();
+                        databaseObjectDetailsTextArea.setText(dumpResults);
+                    }
                 }
             });
-
-//            JMenuItem vacuumMenuItem = new JMenuItem("Vacuum");
-//            JMenuItem exportMenuItem = new JMenuItem("Export to SQL");
-//            databasePopupMenu.add(vacuumMenuItem);
-//            databasePopupMenu.add(exportMenuItem);
         }
 
         @Override
@@ -118,6 +116,12 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame(DatabaseGUIInteractor interactor) {
         dbInteractor = interactor;
         initComponents();
+
+        if (dbInteractor != null) {
+            setTitle("SQLiteJViewer - " + dbInteractor.getDatabaseFile().getName());
+        } else {
+            setTitle("SQLiteJViewer");
+        }
         
         databaseViewTreePanel.getDatabaseViewTree().addTreeSelectionListener(new DatabaseTreeSelectionHandler());
         databaseViewTreePanel.getDatabaseViewTree().addMouseListener(new DatabaseTreePopupMenuHandler());
@@ -136,6 +140,12 @@ public class MainFrame extends javax.swing.JFrame {
         databaseViewTreePanel = new sqlitejviewer.DatabaseViewTreePanel();
         databaseObjectDetailsScrollPane = new javax.swing.JScrollPane();
         databaseObjectDetailsTextArea = new javax.swing.JTextArea();
+        menuBar = new javax.swing.JMenuBar();
+        fileMenu = new javax.swing.JMenu();
+        openDatabaseMenuItem = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        exitMenuItem = new javax.swing.JMenuItem();
+        databaseMenu = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -151,6 +161,34 @@ public class MainFrame extends javax.swing.JFrame {
 
         jSplitPane1.setRightComponent(databaseObjectDetailsScrollPane);
 
+        fileMenu.setText("File");
+
+        openDatabaseMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        openDatabaseMenuItem.setText("Open");
+        openDatabaseMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openDatabaseMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(openDatabaseMenuItem);
+        fileMenu.add(jSeparator1);
+
+        exitMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
+        exitMenuItem.setText("Exit");
+        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(exitMenuItem);
+
+        menuBar.add(fileMenu);
+
+        databaseMenu.setText("Database");
+        menuBar.add(databaseMenu);
+
+        setJMenuBar(menuBar);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -159,17 +197,43 @@ public class MainFrame extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_exitMenuItemActionPerformed
+
+    private void openDatabaseMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDatabaseMenuItemActionPerformed
+        JFileChooser fc = new JFileChooser();
+        int returnVal = fc.showOpenDialog(this);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            try {
+                File databaseFile = fc.getSelectedFile();
+                MainFrame.dbInteractor = new SQLiteDatabaseGUIInteractor(databaseFile);
+                databaseViewTreePanel.refresh();
+                this.setTitle("SQLiteJViewer - " + databaseFile.getName());
+            } catch (Exception ex) {
+                databaseObjectDetailsTextArea.setText("Unable to open database: " + ex);
+            }
+        }
+    }//GEN-LAST:event_openDatabaseMenuItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu databaseMenu;
     private javax.swing.JScrollPane databaseObjectDetailsScrollPane;
     private javax.swing.JTextArea databaseObjectDetailsTextArea;
     private sqlitejviewer.DatabaseViewTreePanel databaseViewTreePanel;
+    private javax.swing.JMenuItem exitMenuItem;
+    private javax.swing.JMenu fileMenu;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenuItem openDatabaseMenuItem;
     // End of variables declaration//GEN-END:variables
 
 }

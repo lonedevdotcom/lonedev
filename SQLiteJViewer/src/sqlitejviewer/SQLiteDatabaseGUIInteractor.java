@@ -1,6 +1,7 @@
 package sqlitejviewer;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,13 +14,14 @@ import javax.swing.table.TableModel;
 public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
     private DatabaseTableDTO[] databaseTables = new DatabaseTableDTO[0];
     private Connection conn;
-    private String dbPath;
+    private File databaseFile;
 
-    public SQLiteDatabaseGUIInteractor(String dbPath) throws Exception {
-        this.dbPath = dbPath;
+    public SQLiteDatabaseGUIInteractor(File databaseFile) throws Exception {
+        this.databaseFile = databaseFile;
+
         connect();
 //        createTestTrigger();
-        dumpDatabase();
+//        dumpDatabase();
     }
     
     public void setDatabaseTables(DatabaseTableDTO[] databaseTables) {
@@ -28,7 +30,7 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
     
     private void connect() throws Exception {
         Class.forName("org.sqlite.JDBC");
-        conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+        conn = DriverManager.getConnection("jdbc:sqlite:" + getDatabaseFile().getAbsolutePath());
     }
     
 
@@ -218,7 +220,7 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
         String errors = "";
 
         try {
-            Process proc = Runtime.getRuntime().exec("sqlite3 " + Main.DB_PATH + " .dump");
+            Process proc = Runtime.getRuntime().exec("sqlite3 \"" + getDatabaseFile().getAbsolutePath() + "\" .dump");
 
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
@@ -237,12 +239,15 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
                 throw new Exception(errors);
             }
 
-            System.out.println(output);
             return output;
 
         } catch (Exception ex) {
             results = "FAILED: " + ex;
             return results;
         }
+    }
+
+    public File getDatabaseFile() {
+        return this.databaseFile;
     }
 }

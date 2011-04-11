@@ -6,6 +6,7 @@ package sqlitejviewer;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
@@ -15,12 +16,19 @@ import javax.swing.UIManager;
  */
 public class Main {
 
-//    private static final String DB_PATH = "C:\\Documents and Settings\\hawkric\\Desktop\\androsync.sldb";
-    public static final String DB_PATH = "androsync.sldb";
-
     public static void main(String[] args) throws Exception {
-        DatabaseGUIInteractor databaseInteractor = new SQLiteDatabaseGUIInteractor(DB_PATH);
+        DatabaseGUIInteractor dbInteractor = null;
 
+        if (args.length > 0) {
+            File dbFile = new File(args[0]);
+            if (!dbFile.exists() || !dbFile.isFile()) {
+                System.out.println("ERROR: " + args[0] + " is not a file!");
+                System.exit(1);
+            } else {
+                dbInteractor = new SQLiteDatabaseGUIInteractor(dbFile);
+            }
+        }
+        
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
@@ -28,11 +36,9 @@ public class Main {
             System.err.println("Unable to set system look and feel: " + ex);
         }
         
-        JFrame mainFrame = new MainFrame(databaseInteractor);
-        mainFrame.setTitle("SQLiteJViewer");
+        JFrame mainFrame = new MainFrame(dbInteractor);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(800, 600);
-//        mainFrame.pack();
         centerScreen(mainFrame);
         mainFrame.setVisible(true);
     }

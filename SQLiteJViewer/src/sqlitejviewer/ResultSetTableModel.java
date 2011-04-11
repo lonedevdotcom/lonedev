@@ -9,6 +9,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class ResultSetTableModel extends AbstractTableModel {
     private String[] columnNames;
+    private Class[] columnClasses;
     private List<List<Object>> cells = new ArrayList<List<Object>>();
 
     public ResultSetTableModel() {
@@ -23,9 +24,36 @@ public class ResultSetTableModel extends AbstractTableModel {
     public ResultSetTableModel(ResultSet rs) throws SQLException {
         ResultSetMetaData rsmd = rs.getMetaData();
 
+        // SOMETHING TO KEEP AN EYE ON! It looks like the ResultSetMetaData
+        // object screws up once the ResultSet itself has been read (ie by
+        // rs.next() ). Putting any rsmd.XXXX commands after the "while" loop at
+        // the bottom throws a nasty exception. A bug on the SQLite side I think.
+
         columnNames = new String[rsmd.getColumnCount()];
         for (int i = 1; i <= rsmd.getColumnCount(); i++) {
             columnNames[i-1] = rsmd.getColumnName(i);
+        }
+
+        columnClasses = new Class[rsmd.getColumnCount()];
+        for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+            int columnType = rsmd.getColumnType(i);
+            
+            switch (columnType) {
+                case java.sql.Types.INTEGER:
+                case java.sql.Types.NUMERIC:
+                    columnClasses[i-1] = Integer.class;
+                    break;
+                case java.sql.Types.VARCHAR:
+                case java.sql.Types.CHAR:
+                    columnClasses[i-1] = String.class;
+                    break;
+                case java.sql.Types.DECIMAL:
+                case java.sql.Types.FLOAT:
+                    columnClasses[i-1] = Float.class;
+                default:
+                    columnClasses[i-1] = Object.class;
+                    break;
+            }
         }
 
         while (rs.next()) {
@@ -43,6 +71,11 @@ public class ResultSetTableModel extends AbstractTableModel {
 
     public int getColumnCount() {
         return columnNames.length;
+    }
+
+    @Override
+    public Class getColumnClass(int columnIndex) {
+        return columnClasses[columnIndex];
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
