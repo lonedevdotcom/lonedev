@@ -60,9 +60,9 @@ public class MainFrame extends javax.swing.JFrame {
             individualTablePopupMenu.add(viewDataMenuItem);
             viewDataMenuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    DatabaseTableDTO selectedTable = (DatabaseTableDTO)databaseViewTreePanel.getSelectedNodesUserObject();
-                    ResultSetDialogBox rsdb = new ResultSetDialogBox(MainFrame.this, true, selectedTable.getName());
-                    rsdb.setTitle(selectedTable.getName());
+                    DatabaseDataDTO selectedDataObject = (DatabaseDataDTO)databaseViewTreePanel.getSelectedNodesUserObject();
+                    ResultSetDialogBox rsdb = new ResultSetDialogBox(MainFrame.this, true, selectedDataObject.getName());
+                    rsdb.setTitle(selectedDataObject.getName());
                     rsdb.setVisible(true);
                 }
             });
@@ -101,11 +101,9 @@ public class MainFrame extends javax.swing.JFrame {
             if (row >= 0) {
                 databaseViewTreePanel.getDatabaseViewTree().setSelectionRow(row);
 
-                // Now we have the selected row. If it's the "Tables" tree, show
-                // the tablePopup.
                 if (databaseViewTreePanel.getSelectedNodesUserObject().toString().equals("Database")) {
                     databasePopupMenu.show(me.getComponent(), me.getX(), me.getY());
-                } else if (databaseViewTreePanel.getSelectedNodesUserObject() instanceof DatabaseTableDTO) {
+                } else if (databaseViewTreePanel.getSelectedNodesUserObject() instanceof DatabaseDataDTO) {
                     individualTablePopupMenu.show(me.getComponent(), me.getX(), me.getY());
                 }
             }

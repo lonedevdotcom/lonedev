@@ -135,6 +135,11 @@ public class DatabaseViewTreePanel extends javax.swing.JPanel {
         for (DatabaseViewDTO databaseView : MainFrame.dbInteractor.getDatabaseViews()) {
             DefaultMutableTreeNode databaseViewTreeNode = new DefaultMutableTreeNode(databaseView);
 
+            for (DatabaseColumnDTO databaseColumn : databaseView.getColumns()) {
+                DefaultMutableTreeNode tableColumnTreeNode = new DefaultMutableTreeNode(databaseColumn);
+                databaseViewTreeNode.add(tableColumnTreeNode);
+            }
+            
             viewCount++;
             viewsTreeNode.add(databaseViewTreeNode);
         }

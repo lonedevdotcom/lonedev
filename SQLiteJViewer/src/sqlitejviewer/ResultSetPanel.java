@@ -20,7 +20,7 @@ import javax.swing.table.TableModel;
  * @author Richard
  */
 public class ResultSetPanel extends javax.swing.JPanel {
-    private String tableName;
+    private String dataObjectName;
 
     /** Creates new form ResultSetPanel */
     public ResultSetPanel() {
@@ -28,11 +28,10 @@ public class ResultSetPanel extends javax.swing.JPanel {
         resultSetTable.setModel(new ResultSetTableModel());
     }
 
-    public ResultSetPanel(String tableName) {
-        
+    public ResultSetPanel(String dataObjectName) {
+        this.dataObjectName = dataObjectName;
         initComponents();
-
-        TableModel resultSetTableModel = MainFrame.dbInteractor.getTableData(tableName);
+        TableModel resultSetTableModel = MainFrame.dbInteractor.getAllData(dataObjectName);
         resultSetTable.setModel(resultSetTableModel);
     }
 
@@ -48,6 +47,7 @@ public class ResultSetPanel extends javax.swing.JPanel {
         resultSetScrollPane = new javax.swing.JScrollPane();
         resultSetTable = new javax.swing.JTable();
 
+        resultSetTable.setAutoCreateRowSorter(true);
         resultSetTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
