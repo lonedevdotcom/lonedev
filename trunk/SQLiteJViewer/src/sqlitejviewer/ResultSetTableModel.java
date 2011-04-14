@@ -75,7 +75,11 @@ public class ResultSetTableModel extends AbstractTableModel {
 
     @Override
     public Class getColumnClass(int columnIndex) {
-        return columnClasses[columnIndex];
+        if (columnClasses != null) {
+            return columnClasses[columnIndex];
+        } else {
+            return Object.class;
+        }
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
@@ -86,5 +90,4 @@ public class ResultSetTableModel extends AbstractTableModel {
     public String getColumnName(int columnIndex) {
         return columnNames[columnIndex];
     }
-
 }

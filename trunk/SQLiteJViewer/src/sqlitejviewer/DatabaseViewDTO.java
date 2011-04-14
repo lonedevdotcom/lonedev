@@ -1,4 +1,4 @@
 package sqlitejviewer;
 
-public class DatabaseViewDTO extends DatabaseObjectDTO {
+public class DatabaseViewDTO extends DatabaseDataDTO {
 }

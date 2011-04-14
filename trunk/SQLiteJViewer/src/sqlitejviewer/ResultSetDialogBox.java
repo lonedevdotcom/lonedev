@@ -19,11 +19,11 @@ import javax.swing.JFrame;
  * @author Richard
  */
 public class ResultSetDialogBox extends javax.swing.JDialog {
-    private String tableName;
+    private String dataObjectName;
     /** Creates new form ResultSetDialogBox */
-    public ResultSetDialogBox(JFrame parent, boolean modal, String tableName) {
+    public ResultSetDialogBox(JFrame parent, boolean modal, String dataObjectName) {
         super(parent, modal);
-        this.tableName = tableName;
+        this.dataObjectName = dataObjectName;
         initComponents();
     }
 
@@ -36,7 +36,7 @@ public class ResultSetDialogBox extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        resultSetPanel = new ResultSetPanel(tableName);
+        resultSetPanel = new ResultSetPanel(dataObjectName);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 

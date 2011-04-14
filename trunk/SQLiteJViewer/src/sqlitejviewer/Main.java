@@ -38,7 +38,7 @@ public class Main {
         
         JFrame mainFrame = new MainFrame(dbInteractor);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setSize(800, 600);
+        mainFrame.setSize(640, 480);
         centerScreen(mainFrame);
         mainFrame.setVisible(true);
     }

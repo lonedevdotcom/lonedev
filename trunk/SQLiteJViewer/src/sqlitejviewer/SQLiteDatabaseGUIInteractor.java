@@ -12,21 +12,18 @@ import java.util.List;
 import javax.swing.table.TableModel;
 
 public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
-    private DatabaseTableDTO[] databaseTables = new DatabaseTableDTO[0];
+//    private DatabaseTableDTO[] databaseTables = new DatabaseTableDTO[0];
     private Connection conn;
     private File databaseFile;
 
     public SQLiteDatabaseGUIInteractor(File databaseFile) throws Exception {
         this.databaseFile = databaseFile;
-
         connect();
-//        createTestTrigger();
-//        dumpDatabase();
     }
-    
-    public void setDatabaseTables(DatabaseTableDTO[] databaseTables) {
-        this.databaseTables = databaseTables;
-    }
+//
+//    public void setDatabaseTables(DatabaseTableDTO[] databaseTables) {
+//        this.databaseTables = databaseTables;
+//    }
     
     private void connect() throws Exception {
         Class.forName("org.sqlite.JDBC");
@@ -65,11 +62,13 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
         }
     }
 
-    private DatabaseColumnDTO[] getDatabaseColumns(String tableName) throws Exception {
+    private DatabaseColumnDTO[] getDatabaseColumns(String dataObjectName) throws Exception {        
         List<DatabaseColumnDTO> databaseColumns = new ArrayList<DatabaseColumnDTO>();
 
         Statement stat = conn.createStatement();
-        ResultSet rs = stat.executeQuery("PRAGMA table_info( " + tableName + " )");
+
+        // TODO: PRAGMA table_info works for views as well, but is this the right way to do it !?
+        ResultSet rs = stat.executeQuery("PRAGMA table_info( " + dataObjectName + " )");
 
         while (rs.next()) {
             DatabaseColumnDTO databaseColumn = new DatabaseColumnDTO();
@@ -147,6 +146,7 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
                 DatabaseViewDTO databaseView = new DatabaseViewDTO();
                 databaseView.setName(rs.getString("name"));
                 databaseView.setSql(rs.getString("sql"));
+                databaseView.setColumns(getDatabaseColumns(rs.getString("name")));
                 databaseViews.add(databaseView);
             }
         } catch (Exception ex) {
@@ -163,16 +163,16 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
         }
     }
 
-    public TableModel getTableData(String tableName) {
+    public TableModel getAllData(String dataObjectName) {
         try {
             Statement stat = conn.createStatement();
-            ResultSet rs = stat.executeQuery("select * from " + tableName);
+            ResultSet rs = stat.executeQuery("select * from " + dataObjectName);
             TableModel tm = new ResultSetTableModel(rs);
             rs.close();
             stat.close();
             return tm;
         } catch (Exception ex) {
-            throw new RuntimeException("Unable to load table: " + ex);
+            throw new RuntimeException("Unable to load data: " + ex);
         }
     }
 
@@ -205,14 +205,6 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
             return databaseTriggers.toArray(new DatabaseTriggerDTO[0]);
         }
     }
-
-//    private void createTestTrigger() {
-//        try {
-//            boolean execute = conn.createStatement().execute("CREATE TRIGGER test_trigger AFTER INSERT ON profile BEGIN update profile set profile_id = 10000 where profile_id = -1; END");
-//        } catch (Exception ex) {
-//            System.err.println("Error creating trigger: " + ex);
-//        }
-//    }
 
     public String dumpDatabase() {
         String results = null;

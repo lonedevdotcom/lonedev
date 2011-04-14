@@ -8,7 +8,7 @@ public interface DatabaseGUIInteractor {
     public DatabaseIndexDTO[] getDatabaseIndexes();
     public DatabaseViewDTO[] getDatabaseViews();
     public DatabaseTriggerDTO[] getDatabaseTriggers();
-    public TableModel getTableData(String tableName);
+    public TableModel getAllData(String dataObjectName);
     public String dumpDatabase();
     public File getDatabaseFile();
 }
