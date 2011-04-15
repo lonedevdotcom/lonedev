@@ -2,7 +2,7 @@ package sqlitejviewer;
 
 public class DatabaseColumnDTO {
     private String columnName, defaultValue;
-    private DatabaseDataType columnDataType;
+    private String columnDataType;
     private boolean nullableColumn, primaryKey;
 
 
@@ -23,14 +23,14 @@ public class DatabaseColumnDTO {
     /**
      * @return the columnDataType
      */
-    public DatabaseDataType getColumnDataType() {
+    public String getColumnDataType() {
         return columnDataType;
     }
 
     /**
      * @param columnDataType the columnDataType to set
      */
-    public void setColumnDataType(DatabaseDataType columnDataType) {
+    public void setColumnDataType(String columnDataType) {
         this.columnDataType = columnDataType;
     }
 

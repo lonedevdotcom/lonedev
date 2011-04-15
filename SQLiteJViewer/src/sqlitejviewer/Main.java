@@ -25,7 +25,7 @@ public class Main {
                 System.out.println("ERROR: " + args[0] + " is not a file!");
                 System.exit(1);
             } else {
-                dbInteractor = new SQLiteDatabaseGUIInteractor(dbFile);
+                dbInteractor = new SQLiteDatabaseGUIInteractor(dbFile, false);
             }
         }
         

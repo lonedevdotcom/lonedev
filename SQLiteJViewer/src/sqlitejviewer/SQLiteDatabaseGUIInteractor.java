@@ -15,8 +15,10 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
 //    private DatabaseTableDTO[] databaseTables = new DatabaseTableDTO[0];
     private Connection conn;
     private File databaseFile;
+    private boolean showingRowCounts;
 
-    public SQLiteDatabaseGUIInteractor(File databaseFile) throws Exception {
+    public SQLiteDatabaseGUIInteractor(File databaseFile, boolean showRowCounts) throws Exception {
+        this.showingRowCounts = showRowCounts;
         this.databaseFile = databaseFile;
         connect();
     }
@@ -45,6 +47,13 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
                 DatabaseTableDTO databaseTable = new DatabaseTableDTO();
                 databaseTable.setName(rs.getString("name"));
                 databaseTable.setSql(rs.getString("sql"));
+
+                if (isShowingRowCounts()) {
+                    databaseTable.setRowCount(getRowCount(rs.getString("name")));
+                } else {
+                    databaseTable.setRowCount(-1);
+                }
+
                 databaseTable.setColumns(getDatabaseColumns(rs.getString("name")));
                 databaseTables.add(databaseTable);
             }
@@ -76,21 +85,7 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
             databaseColumn.setNullableColumn(rs.getInt("notnull") == 0);
             databaseColumn.setPrimaryKey(rs.getInt("pk") == 1);
             databaseColumn.setDefaultValue(rs.getString("dflt_value"));
-
-            String columnTypeString = rs.getString("type");
-            if (columnTypeString.equals("INTEGER")) {
-                databaseColumn.setColumnDataType(DatabaseDataType.INTEGER);
-            } else if (columnTypeString.equals("TEXT")) {
-                databaseColumn.setColumnDataType(DatabaseDataType.TEXT);
-            } else if (columnTypeString.equals("REAL")) {
-                databaseColumn.setColumnDataType(DatabaseDataType.REAL);
-            } else if (columnTypeString.equals("NUMERIC")) {
-                databaseColumn.setColumnDataType(DatabaseDataType.NUMERIC);
-            } else if (columnTypeString.equals("BLOB")) {
-                databaseColumn.setColumnDataType(DatabaseDataType.BLOB);
-            } else {
-                databaseColumn.setColumnDataType(DatabaseDataType.NONE);
-            }
+            databaseColumn.setColumnDataType(rs.getString("type").toUpperCase());
 
             databaseColumns.add(databaseColumn);
         }
@@ -146,6 +141,13 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
                 DatabaseViewDTO databaseView = new DatabaseViewDTO();
                 databaseView.setName(rs.getString("name"));
                 databaseView.setSql(rs.getString("sql"));
+
+                if (isShowingRowCounts()) {
+                    databaseView.setRowCount(getRowCount(rs.getString("name")));
+                } else {
+                    databaseView.setRowCount(-1);
+                }
+
                 databaseView.setColumns(getDatabaseColumns(rs.getString("name")));
                 databaseViews.add(databaseView);
             }
@@ -241,5 +243,46 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
 
     public File getDatabaseFile() {
         return this.databaseFile;
+    }
+
+    public int getRowCount(String dataObjectName) {
+        int numRows = 0;
+        
+        Statement stat = null;
+        ResultSet rs = null;
+
+        try {
+            stat = conn.createStatement();
+            rs = stat.executeQuery("select count(*) from " + dataObjectName);
+
+            while (rs.next()) {
+                numRows = rs.getInt(1);
+            }
+        } catch (Exception ex) {
+            System.err.println("Error getting row count for " + dataObjectName + ": " + ex);
+        } finally {
+            try {
+                rs.close();
+                stat.close();
+            } catch (Exception ex) {
+                // We tried to disconnect!
+            }
+        }
+
+        return numRows;
+    }
+
+    /**
+     * @return the showingRowCounts
+     */
+    public boolean isShowingRowCounts() {
+        return showingRowCounts;
+    }
+
+    /**
+     * @param showingRowCounts the showingRowCounts to set
+     */
+    public void setShowingRowCounts(boolean showingRowCounts) {
+        this.showingRowCounts = showingRowCounts;
     }
 }

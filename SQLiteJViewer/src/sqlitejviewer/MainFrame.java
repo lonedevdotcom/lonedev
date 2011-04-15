@@ -153,6 +153,7 @@ public class MainFrame extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         exitMenuItem = new javax.swing.JMenuItem();
         databaseMenu = new javax.swing.JMenu();
+        showRowCountCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         refreshDatabaseMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -193,6 +194,14 @@ public class MainFrame extends javax.swing.JFrame {
         menuBar.add(fileMenu);
 
         databaseMenu.setText("Database");
+
+        showRowCountCheckBoxMenuItem.setText("Show Row Count");
+        showRowCountCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showRowCountCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        databaseMenu.add(showRowCountCheckBoxMenuItem);
 
         refreshDatabaseMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
         refreshDatabaseMenuItem.setText("Refresh");
@@ -240,11 +249,23 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_refreshDatabaseMenuItemActionPerformed
 
+    private void showRowCountCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showRowCountCheckBoxMenuItemActionPerformed
+        // On reload of the database file, the menu item is evaluated to see
+        // whether or not to get the row counts. As I have now realised, there
+        // is no point in setting the "dbInteractorshowRowCounts" variable here
+        // because a new instance of SQLGUIInteractor is created anyway, blowing
+        // away the previous setting.
+        
+        if (MainFrame.dbInteractor != null) {
+            loadDatabaseFile(dbInteractor.getDatabaseFile());
+        }
+    }//GEN-LAST:event_showRowCountCheckBoxMenuItemActionPerformed
+
     private void loadDatabaseFile(File databaseFile) {
         undergoingRefresh = true;
         
         try {
-            MainFrame.dbInteractor = new SQLiteDatabaseGUIInteractor(databaseFile);
+            MainFrame.dbInteractor = new SQLiteDatabaseGUIInteractor(databaseFile, showRowCountCheckBoxMenuItem.getState());
             databaseViewTreePanel.refresh();
             this.setTitle("SQLiteJViewer - " + databaseFile.getName());
         } catch (Exception ex) {
@@ -266,6 +287,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openDatabaseMenuItem;
     private javax.swing.JMenuItem refreshDatabaseMenuItem;
+    private javax.swing.JCheckBoxMenuItem showRowCountCheckBoxMenuItem;
     // End of variables declaration//GEN-END:variables
 
 }
