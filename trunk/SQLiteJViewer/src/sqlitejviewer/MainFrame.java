@@ -29,6 +29,11 @@ import javax.swing.event.TreeSelectionListener;
 public class MainFrame extends javax.swing.JFrame {
 
     static DatabaseGUIInteractor dbInteractor;
+    
+    // Creating a boolean flag so that listeners don't do anything whilst a 
+    // refresh of the tree, panel etc is taking place. Otherwise, they're going
+    // to get a NullPointerException.
+    private boolean undergoingRefresh;
 
     /**
      * Class that reacts to a new node being selected. It allows for information
@@ -36,13 +41,15 @@ public class MainFrame extends javax.swing.JFrame {
      */
     private class DatabaseTreeSelectionHandler implements TreeSelectionListener {
         public void valueChanged(TreeSelectionEvent tse) {
-            databaseObjectDetailsTextArea.setText(""); // Remove text first, then "maybe" add it later.
+            if (!undergoingRefresh) {
+                databaseObjectDetailsTextArea.setText(""); // Remove text first, then "maybe" add it later.
             
-            Object selectedNode = databaseViewTreePanel.getSelectedNodesUserObject();
+                Object selectedNode = databaseViewTreePanel.getSelectedNodesUserObject();
 
-            if (selectedNode instanceof DatabaseObjectDTO) {
-                DatabaseObjectDTO databaseObject = (DatabaseObjectDTO) selectedNode;
-                databaseObjectDetailsTextArea.setText(databaseObject.getSql());
+                if (selectedNode instanceof DatabaseObjectDTO) {
+                    DatabaseObjectDTO databaseObject = (DatabaseObjectDTO) selectedNode;
+                    databaseObjectDetailsTextArea.setText(databaseObject.getSql());
+                }
             }
         }
     }
@@ -94,17 +101,19 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
         private void maybeShowPopup(MouseEvent me) {
-            // Firstly, the user may have right-clicked over a node that wasn't
-            // selected, we should select the node over which they are right-
-            // clicking.
-            int row = databaseViewTreePanel.getDatabaseViewTree().getRowForLocation(me.getX(), me.getY());
-            if (row >= 0) {
-                databaseViewTreePanel.getDatabaseViewTree().setSelectionRow(row);
+            if (! undergoingRefresh) {
+                // Firstly, the user may have right-clicked over a node that wasn't
+                // selected, we should select the node over which they are right-
+                // clicking.
+                int row = databaseViewTreePanel.getDatabaseViewTree().getRowForLocation(me.getX(), me.getY());
+                if (row >= 0) {
+                    databaseViewTreePanel.getDatabaseViewTree().setSelectionRow(row);
 
-                if (databaseViewTreePanel.getSelectedNodesUserObject().toString().equals("Database")) {
-                    databasePopupMenu.show(me.getComponent(), me.getX(), me.getY());
-                } else if (databaseViewTreePanel.getSelectedNodesUserObject() instanceof DatabaseDataDTO) {
-                    individualTablePopupMenu.show(me.getComponent(), me.getX(), me.getY());
+                    if (databaseViewTreePanel.getSelectedNodesUserObject().toString().equals("Database")) {
+                        databasePopupMenu.show(me.getComponent(), me.getX(), me.getY());
+                    } else if (databaseViewTreePanel.getSelectedNodesUserObject() instanceof DatabaseDataDTO) {
+                        individualTablePopupMenu.show(me.getComponent(), me.getX(), me.getY());
+                    }
                 }
             }
         }
@@ -144,6 +153,7 @@ public class MainFrame extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         exitMenuItem = new javax.swing.JMenuItem();
         databaseMenu = new javax.swing.JMenu();
+        refreshDatabaseMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -183,6 +193,16 @@ public class MainFrame extends javax.swing.JFrame {
         menuBar.add(fileMenu);
 
         databaseMenu.setText("Database");
+
+        refreshDatabaseMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
+        refreshDatabaseMenuItem.setText("Refresh");
+        refreshDatabaseMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshDatabaseMenuItemActionPerformed(evt);
+            }
+        });
+        databaseMenu.add(refreshDatabaseMenuItem);
+
         menuBar.add(databaseMenu);
 
         setJMenuBar(menuBar);
@@ -210,17 +230,30 @@ public class MainFrame extends javax.swing.JFrame {
         int returnVal = fc.showOpenDialog(this);
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                File databaseFile = fc.getSelectedFile();
-                MainFrame.dbInteractor = new SQLiteDatabaseGUIInteractor(databaseFile);
-                databaseViewTreePanel.refresh();
-                this.setTitle("SQLiteJViewer - " + databaseFile.getName());
-            } catch (Exception ex) {
-                databaseObjectDetailsTextArea.setText("Unable to open database: " + ex);
-            }
+            loadDatabaseFile(fc.getSelectedFile());
         }
     }//GEN-LAST:event_openDatabaseMenuItemActionPerformed
 
+    private void refreshDatabaseMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshDatabaseMenuItemActionPerformed
+        if (MainFrame.dbInteractor != null) {
+            loadDatabaseFile(dbInteractor.getDatabaseFile());
+        }
+    }//GEN-LAST:event_refreshDatabaseMenuItemActionPerformed
+
+    private void loadDatabaseFile(File databaseFile) {
+        undergoingRefresh = true;
+        
+        try {
+            MainFrame.dbInteractor = new SQLiteDatabaseGUIInteractor(databaseFile);
+            databaseViewTreePanel.refresh();
+            this.setTitle("SQLiteJViewer - " + databaseFile.getName());
+        } catch (Exception ex) {
+            databaseObjectDetailsTextArea.setText("Unable to open database: " + ex);
+            ex.printStackTrace();
+        } finally {
+            undergoingRefresh = false;
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu databaseMenu;
     private javax.swing.JScrollPane databaseObjectDetailsScrollPane;
@@ -232,6 +265,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openDatabaseMenuItem;
+    private javax.swing.JMenuItem refreshDatabaseMenuItem;
     // End of variables declaration//GEN-END:variables
 
 }
