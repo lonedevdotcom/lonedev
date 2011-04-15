@@ -11,4 +11,7 @@ public interface DatabaseGUIInteractor {
     public TableModel getAllData(String dataObjectName);
     public String dumpDatabase();
     public File getDatabaseFile();
+    public int getRowCount(String dataObjectName);
+    public boolean isShowingRowCounts();
+    public void setShowingRowCounts(boolean showingRowCounts);
 }
