@@ -72,18 +72,9 @@ public class DatabaseViewTreePanel extends javax.swing.JPanel {
         root.add(triggersTreeNode);
         root.add(viewsTreeNode);
 
-        // We can't just blindly reload new JTrees you know. We have to (apparently)
-        // queue it up for update. Seems to work fine without this invokeLater,
-        // but putting it in there for consistency.
-        try {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    treeModel.reload();
-                }
-            });
-        } catch (Exception ex) {
-            System.err.println("Problem refreshing the database tree: " + ex);
-        }
+        // Because (I hope) we are currently running in the Swing Dispatcher
+        // thread, we don't need to call "SwingUtiltities.invokeLater()".
+        treeModel.reload();
     }
 
     private int populateTablesTreeNode(DefaultMutableTreeNode tablesTreeNode) {
