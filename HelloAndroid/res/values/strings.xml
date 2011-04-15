@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <string name="hello">Hello World, HelloWorldActivity!</string>
-    <string name="app_name">Hello, Android</string>
-	<string name="button_pressed">You Pressed It !</string>
-	<string name="button_unpressed">Press Me!</string>
-</resources>
