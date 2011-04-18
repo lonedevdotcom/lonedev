@@ -34,6 +34,20 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
         conn = DriverManager.getConnection("jdbc:sqlite:" + getDatabaseFile().getAbsolutePath());
     }
     
+    public void disconnect() throws Exception {
+        conn.close();
+    }
+
+    @Override
+    public void finalize() {
+        if (conn != null) {
+            try {
+                disconnect();
+            } catch (Exception ex) {
+                System.err.println("Errors closing connection: " + ex);
+            }
+        }
+    }
 
     public DatabaseTableDTO[] getDatabaseTables() {
         Statement stat = null;
@@ -61,6 +75,7 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
             }
         } catch (Exception ex) {
             System.err.println(ex.toString());
+            return null;
         } finally {
             try {
                 rs.close();
@@ -117,6 +132,7 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
             }
         } catch (Exception ex) {
             System.err.println(ex.toString());
+            return null;
         } finally {
             try {
                 rs.close();
@@ -155,6 +171,7 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
             }
         } catch (Exception ex) {
             System.err.println(ex.toString());
+            return null;
         } finally {
             try {
                 rs.close();
@@ -198,6 +215,7 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
             }
         } catch (Exception ex) {
             System.err.println(ex.toString());
+            return null;
         } finally {
             try {
                 rs.close();

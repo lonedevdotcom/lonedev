@@ -33,8 +33,10 @@ public class ResultSetDialogBox extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         exportDataButton.setText("Export Data");
+        exportDataButton.setEnabled(false);
 
         refreshDataButton.setText("Refresh (F5)");
+        refreshDataButton.setEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
