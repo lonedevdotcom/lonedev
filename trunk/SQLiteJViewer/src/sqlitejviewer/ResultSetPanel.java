@@ -1,23 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * ResultSetPanel.java
- *
- * Created on 10-Apr-2011, 17:01:09
- */
-
 package sqlitejviewer;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.swing.table.TableModel;
 
 /**
+ * The container for the JTable that has a ResultSetTableModel.
  *
- * @author Richard
+ * @author Richard Hawkes
  */
 public class ResultSetPanel extends javax.swing.JPanel {
     private String dataObjectName;

@@ -11,11 +11,19 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 /**
+ * Starting point for the application. Allows for the database path to be
+ * specified at runtime too.
  *
- * @author hawkric
+ * @author Richard Hawkes
  */
 public class Main {
 
+    /**
+     * The entry point in to the SQLiteJViewer application.
+     *
+     * @param args Can contain the filename of the database if you like!
+     * @throws Exception Catches any DB connection / file-load issues.
+     */
     public static void main(String[] args) throws Exception {
         DatabaseGUIInteractor dbInteractor = null;
 
@@ -43,7 +51,14 @@ public class Main {
         mainFrame.setVisible(true);
     }
 
-    public static void centerScreen(JFrame frame) {
+    /**
+     * Derives the current users screen size and puts the JFrame smack in the
+     * middle. Without this, it goes annoyingly to the top-left (at least it
+     * does in Windows). This gives a better user experience.
+     *
+     * @param frame The JFrame to reposition.
+     */
+    private static void centerScreen(JFrame frame) {
         Toolkit tk = Toolkit.getDefaultToolkit();
         Dimension screenSize = tk.getScreenSize();
         double screenHeight = screenSize.getHeight();

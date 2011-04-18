@@ -45,6 +45,7 @@ public class DatabaseDataDTO extends DatabaseObjectDTO {
     public String toString() {
         String output = getName();
 
+        // Add the row count if appropriate.
         if (getRowCount() >= 0) {
             output += " - " + getRowCount() + " row(s)";
         }

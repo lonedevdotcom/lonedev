@@ -1,14 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * MainFrame.java
- *
- * Created on 07-Apr-2011, 11:55:37
- */
-
 package sqlitejviewer;
 
 import java.awt.event.ActionEvent;
@@ -23,8 +12,12 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
 /**
+ * The main frame! This is the frame that contains the various interaction
+ * panels and listeners. It also has a static reference to the
+ * DatabaseGUIInteractor instance. This if convenience to avoid having to pass
+ * it around between all of the various panels. 
  *
- * @author hawkric
+ * @author Richard Hawkes
  */
 public class MainFrame extends javax.swing.JFrame {
 
@@ -43,7 +36,7 @@ public class MainFrame extends javax.swing.JFrame {
         public void valueChanged(TreeSelectionEvent tse) {
             if (!undergoingRefresh) {
                 databaseObjectDetailsTextArea.setText(""); // Remove text first, then "maybe" add it later.
-            
+
                 Object selectedNode = databaseViewTreePanel.getSelectedNodesUserObject();
 
                 if (selectedNode instanceof DatabaseObjectDTO) {
@@ -250,11 +243,11 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_refreshDatabaseMenuItemActionPerformed
 
     private void showRowCountCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showRowCountCheckBoxMenuItemActionPerformed
-        // On reload of the database file, the menu item is evaluated to see
-        // whether or not to get the row counts. As I have now realised, there
-        // is no point in setting the "dbInteractorshowRowCounts" variable here
-        // because a new instance of SQLGUIInteractor is created anyway, blowing
-        // away the previous setting.
+        // On reload of the database file (below), the menu item is evaluated to
+        // see whether or not to get the row counts. As I have now realised,
+        // there is no point in setting the "dbInteractorshowRowCounts" variable
+        // here because a new instance of SQLGUIInteractor is created anyway,
+        // blowing away the previous setting.
         
         if (MainFrame.dbInteractor != null) {
             loadDatabaseFile(dbInteractor.getDatabaseFile());

@@ -1,5 +1,12 @@
 package sqlitejviewer;
 
+/**
+ * The common component that is contained within SQLite objects (ie tables,
+ * triggers, views etc). All DatabaseObjectDTO's have a name and you can obtain
+ * the SQL to create the object via the sqlite_master table.
+ *
+ * @author Richard Hawkes
+ */
 public abstract class DatabaseObjectDTO {
     private String name, sql;
 
