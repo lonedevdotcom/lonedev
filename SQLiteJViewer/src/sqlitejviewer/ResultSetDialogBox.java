@@ -1,22 +1,12 @@
-/*
- *
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * ResultSetDialogBox.java
- *
- * Created on 10-Apr-2011, 18:04:50
- */
-
 package sqlitejviewer;
 
 import javax.swing.JFrame;
 
 /**
+ * This dialog box can be used to display table/view data. It's the container
+ * for the ResultSetPanel.
  *
- * @author Richard
+ * @author Richard Hawkes
  */
 public class ResultSetDialogBox extends javax.swing.JDialog {
     private String dataObjectName;

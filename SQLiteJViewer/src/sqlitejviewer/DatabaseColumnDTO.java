@@ -1,5 +1,11 @@
 package sqlitejviewer;
 
+/**
+ * DatabaseColumnDTO's are (at the time of writing) contained within the
+ * DatabaseDataDTO objects (ie DatabaseTableDTO and DatabaseViewDTO).
+ *
+ * @author Richard hawkes
+ */
 public class DatabaseColumnDTO {
     private String columnName, defaultValue;
     private String columnDataType;

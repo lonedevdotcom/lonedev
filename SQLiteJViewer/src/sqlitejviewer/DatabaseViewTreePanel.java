@@ -1,7 +1,6 @@
 package sqlitejviewer;
 
 import javax.swing.JTree;
-import javax.swing.SwingUtilities;
 import javax.swing.tree.*;
 
 public class DatabaseViewTreePanel extends javax.swing.JPanel {
@@ -153,7 +152,15 @@ public class DatabaseViewTreePanel extends javax.swing.JPanel {
      * @return The userObject of the currently selected node.
      */
     public Object getSelectedNodesUserObject() {
-        return ((DefaultMutableTreeNode) databaseViewTree.getLastSelectedPathComponent()).getUserObject();
+        // It might be possible that nothing is selected (eg if the user clicks
+        // the "plus" box). Therefore, getLastSelectedPathComponent() would
+        // return null, and this will blow up the "getUserObject()" method. So
+        // we'll put a check in here to keep it honest :)
+        if (databaseViewTree.getLastSelectedPathComponent() != null) {
+            return ((DefaultMutableTreeNode) databaseViewTree.getLastSelectedPathComponent()).getUserObject();
+        } else {
+            return null;
+        }
     }
 
     private int populateTriggerTreeNode(DefaultMutableTreeNode triggersTreeNode) {

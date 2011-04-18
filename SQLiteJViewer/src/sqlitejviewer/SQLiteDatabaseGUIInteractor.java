@@ -11,8 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.TableModel;
 
+/**
+ * The implementer of the DatabaseGUIInteractor. Does the necessary grunt work
+ * to/from the database to get the details required.
+ *
+ * @author Richard Hawkes
+ */
 public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
-//    private DatabaseTableDTO[] databaseTables = new DatabaseTableDTO[0];
+
     private Connection conn;
     private File databaseFile;
     private boolean showingRowCounts;
@@ -22,10 +28,6 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
         this.databaseFile = databaseFile;
         connect();
     }
-//
-//    public void setDatabaseTables(DatabaseTableDTO[] databaseTables) {
-//        this.databaseTables = databaseTables;
-//    }
     
     private void connect() throws Exception {
         Class.forName("org.sqlite.JDBC");

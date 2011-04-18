@@ -7,6 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
+/**
+ * This is my convenient way to grab an SQL ResultSet and convert it straight to
+ * a TableModel. I suspect this has been done many times before, and it really
+ * makes it easy to run a SQL statement and pass the ResultSet into this method.
+ * It can then be readily displayed.
+ *
+ * @author Richard Hawkes
+ */
 public class ResultSetTableModel extends AbstractTableModel {
     private String[] columnNames;
     private Class[] columnClasses;
@@ -24,10 +32,11 @@ public class ResultSetTableModel extends AbstractTableModel {
     public ResultSetTableModel(ResultSet rs) throws SQLException {
         ResultSetMetaData rsmd = rs.getMetaData();
 
-        // SOMETHING TO KEEP AN EYE ON! It looks like the ResultSetMetaData
-        // object screws up once the ResultSet itself has been read (ie by
-        // rs.next() ). Putting any rsmd.XXXX commands after the "while" loop at
-        // the bottom throws a nasty exception. A bug on the SQLite side I think.
+        // TODO: Keep an eye on ResultSetMetaData.
+        // It looks like the ResultSetMetaData object screws up once the
+        // ResultSet itself has been read (ie by rs.next() ). Putting any
+        // rsmd.XXXX commands after the "while" loop at the bottom throws a
+        // nasty exception. A bug on the SQLite side I think.
 
         columnNames = new String[rsmd.getColumnCount()];
         for (int i = 1; i <= rsmd.getColumnCount(); i++) {

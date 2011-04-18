@@ -3,6 +3,11 @@ package sqlitejviewer;
 import java.io.File;
 import javax.swing.table.TableModel;
 
+/**
+ * Interface that defines the methods the GUI classes can call.
+ *
+ * @author Richard Hawkes
+ */
 public interface DatabaseGUIInteractor {
     public DatabaseTableDTO[] getDatabaseTables();
     public DatabaseIndexDTO[] getDatabaseIndexes();
