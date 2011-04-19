@@ -1,6 +1,8 @@
 package sqlitejviewer;
 
 import javax.swing.JFrame;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 /**
  * This dialog box can be used to display table/view data. It's the container
@@ -35,8 +37,12 @@ public class ResultSetDialogBox extends javax.swing.JDialog {
         exportDataButton.setText("Export Data");
         exportDataButton.setEnabled(false);
 
-        refreshDataButton.setText("Refresh (F5)");
-        refreshDataButton.setEnabled(false);
+        refreshDataButton.setText("Refresh");
+        refreshDataButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshDataButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -66,6 +72,12 @@ public class ResultSetDialogBox extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void refreshDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshDataButtonActionPerformed
+        TableModel refreshedDataTableModel = MainFrame.dbInteractor.getAllData(this.dataObjectName);
+        resultSetPanel.getResultSetTable().setModel(refreshedDataTableModel);
+        ((AbstractTableModel)resultSetPanel.getResultSetTable().getModel()).fireTableDataChanged();
+    }//GEN-LAST:event_refreshDataButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
