@@ -67,4 +67,11 @@ public class ResultSetPanel extends javax.swing.JPanel {
     private javax.swing.JTable resultSetTable;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * @return the resultSetTable
+     */
+    public javax.swing.JTable getResultSetTable() {
+        return resultSetTable;
+    }
+
 }
