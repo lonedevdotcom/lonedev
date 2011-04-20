@@ -42,4 +42,6 @@ public abstract class DatabaseObjectDTO {
     public String toString() {
         return this.getName();
     }
+
+    public abstract String getObjectType();
 }

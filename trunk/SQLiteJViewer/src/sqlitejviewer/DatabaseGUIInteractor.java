@@ -19,4 +19,5 @@ public interface DatabaseGUIInteractor {
     public int getRowCount(String dataObjectName);
     public boolean isShowingRowCounts();
     public void setShowingRowCounts(boolean showingRowCounts);
+    public void dropDatabaseObject(DatabaseObjectDTO databaseObject) throws Exception;
 }

@@ -52,4 +52,9 @@ public class DatabaseDataDTO extends DatabaseObjectDTO {
         
         return output;
     }
+
+    @Override
+    public String getObjectType() {
+        return "data object";
+    }
 }

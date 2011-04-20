@@ -35,12 +35,12 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
     }
     
     public void disconnect() throws Exception {
-        conn.close();
+        getConn().close();
     }
 
     @Override
     public void finalize() {
-        if (conn != null) {
+        if (getConn() != null) {
             try {
                 disconnect();
             } catch (Exception ex) {
@@ -55,7 +55,7 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
         List<DatabaseTableDTO> databaseTables = new ArrayList<DatabaseTableDTO>();
 
         try {
-            stat = conn.createStatement();
+            stat = getConn().createStatement();
 
             rs = stat.executeQuery("select * from sqlite_master where type = 'table'");
 
@@ -91,7 +91,7 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
     private DatabaseColumnDTO[] getDatabaseColumns(String dataObjectName) throws Exception {        
         List<DatabaseColumnDTO> databaseColumns = new ArrayList<DatabaseColumnDTO>();
 
-        Statement stat = conn.createStatement();
+        Statement stat = getConn().createStatement();
 
         // TODO: PRAGMA table_info works for views as well, but is this the right way to do it !?
         ResultSet rs = stat.executeQuery("PRAGMA table_info( " + dataObjectName + " )");
@@ -120,7 +120,7 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
         List<DatabaseIndexDTO> databaseIndexes = new ArrayList<DatabaseIndexDTO>();
 
         try {
-            stat = conn.createStatement();
+            stat = getConn().createStatement();
 
             rs = stat.executeQuery("select * from sqlite_master where type = 'index'");
 
@@ -151,7 +151,7 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
         List<DatabaseViewDTO> databaseViews = new ArrayList<DatabaseViewDTO>();
 
         try {
-            stat = conn.createStatement();
+            stat = getConn().createStatement();
 
             rs = stat.executeQuery("select * from sqlite_master where type = 'view'");
 
@@ -186,7 +186,7 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
 
     public TableModel getAllData(String dataObjectName) {
         try {
-            Statement stat = conn.createStatement();
+            Statement stat = getConn().createStatement();
             ResultSet rs = stat.executeQuery("select * from " + dataObjectName);
             TableModel tm = new ResultSetTableModel(rs);
             rs.close();
@@ -203,7 +203,7 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
         List<DatabaseTriggerDTO> databaseTriggers = new ArrayList<DatabaseTriggerDTO>();
 
         try {
-            stat = conn.createStatement();
+            stat = getConn().createStatement();
 
             rs = stat.executeQuery("select * from sqlite_master where type = 'trigger'");
 
@@ -272,7 +272,7 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
         ResultSet rs = null;
 
         try {
-            stat = conn.createStatement();
+            stat = getConn().createStatement();
             rs = stat.executeQuery("select count(*) from " + dataObjectName);
 
             while (rs.next()) {
@@ -304,5 +304,18 @@ public class SQLiteDatabaseGUIInteractor implements DatabaseGUIInteractor {
      */
     public void setShowingRowCounts(boolean showingRowCounts) {
         this.showingRowCounts = showingRowCounts;
+    }
+
+    public void dropDatabaseObject(DatabaseObjectDTO databaseObject) throws Exception {
+        Statement stat = getConn().createStatement();
+        stat.execute("drop " + databaseObject.getObjectType() + " " + databaseObject.getName());
+        stat.close();
+    }
+
+    /**
+     * @return the conn
+     */
+    public Connection getConn() {
+        return conn;
     }
 }
