@@ -6,4 +6,8 @@ package sqlitejviewer;
  * @author Richard Hawkes
  */
 public class DatabaseViewDTO extends DatabaseDataDTO {
+    @Override
+    public String getObjectType() {
+        return "view";
+    }
 }

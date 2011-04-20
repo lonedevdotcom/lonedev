@@ -1,5 +1,6 @@
 package sqlitejviewer;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -7,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -53,17 +55,40 @@ public class MainFrame extends javax.swing.JFrame {
      */
     private class DatabaseTreePopupMenuHandler extends MouseAdapter {
         JPopupMenu databasePopupMenu = new JPopupMenu();
-        JPopupMenu individualTablePopupMenu = new JPopupMenu();
+        JPopupMenu databaseObjectPopupMenu = new JPopupMenu();
 
         public DatabaseTreePopupMenuHandler() {
             JMenuItem viewDataMenuItem = new JMenuItem("View Data");
-            individualTablePopupMenu.add(viewDataMenuItem);
+            databaseObjectPopupMenu.add(viewDataMenuItem);
             viewDataMenuItem.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     DatabaseDataDTO selectedDataObject = (DatabaseDataDTO)databaseViewTreePanel.getSelectedNodesUserObject();
                     ResultSetDialogBox rsdb = new ResultSetDialogBox(MainFrame.this, true, selectedDataObject.getName());
                     rsdb.setTitle(selectedDataObject.getName());
                     rsdb.setVisible(true);
+                }
+            });
+
+            JMenuItem dropDataObjectMenuItem = new JMenuItem("Drop");
+            databaseObjectPopupMenu.add(dropDataObjectMenuItem);
+
+            dropDataObjectMenuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    DatabaseObjectDTO selectedNode = (DatabaseObjectDTO)databaseViewTreePanel.getSelectedNodesUserObject();
+                    int result = JOptionPane.showConfirmDialog(MainFrame.this, "Are you sure you want to drop " + selectedNode.getObjectType() + " " + selectedNode + "?", "Confirm Drop", JOptionPane.YES_NO_OPTION);
+                    if (result == JOptionPane.YES_OPTION) {
+                        
+                        try {
+                            MainFrame.dbInteractor.dropDatabaseObject(selectedNode);
+                            String output = "Successfully dropped " + selectedNode.getObjectType() + " " + selectedNode.getName();
+                            JOptionPane.showMessageDialog(MainFrame.this, output, "Drop " + selectedNode.getObjectType() + " Result", JOptionPane.INFORMATION_MESSAGE);
+                        } catch (Exception ex) {
+                            String output = "Failed to drop " + selectedNode.getObjectType() + " " + selectedNode.getName() + ":\n" + ex;
+                            JOptionPane.showMessageDialog(MainFrame.this, output, "Drop " + selectedNode.getObjectType() + " Error", JOptionPane.ERROR_MESSAGE);
+                        } finally {
+                            loadDatabaseFile(dbInteractor.getDatabaseFile());
+                        }
+                    }
                 }
             });
 
@@ -104,8 +129,13 @@ public class MainFrame extends javax.swing.JFrame {
 
                     if (databaseViewTreePanel.getSelectedNodesUserObject().toString().equals("Database")) {
                         databasePopupMenu.show(me.getComponent(), me.getX(), me.getY());
-                    } else if (databaseViewTreePanel.getSelectedNodesUserObject() instanceof DatabaseDataDTO) {
-                        individualTablePopupMenu.show(me.getComponent(), me.getX(), me.getY());
+                    } else if (databaseViewTreePanel.getSelectedNodesUserObject() instanceof DatabaseObjectDTO) {
+                        // Display the "View Data" popup only if this is a
+                        // DatabaseDataDTO instance (ie it has data to view!)
+                        Component viewDataMenuItem = databaseObjectPopupMenu.getComponent(0); // 0 is the first entry (ie View Data)
+                        viewDataMenuItem.setVisible(databaseViewTreePanel.getSelectedNodesUserObject() instanceof DatabaseDataDTO);
+
+                        databaseObjectPopupMenu.show(me.getComponent(), me.getX(), me.getY());
                     }
                 }
             }

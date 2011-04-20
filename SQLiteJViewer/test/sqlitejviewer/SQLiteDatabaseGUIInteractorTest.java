@@ -18,6 +18,9 @@ public class SQLiteDatabaseGUIInteractorTest {
 
         try {
             dbInteractor = new SQLiteDatabaseGUIInteractor(f, true);
+            
+            // TODO: Once a createTable(...) method is written, use that instead.
+            dbInteractor.getConn().createStatement().execute("create table if not exists test_table ( test_col integer primary key )");
         } catch (Exception ex) {
             fail("Failed to instantiate SQLiteDatabaseGUIInteractor: " + ex);
         }
@@ -128,5 +131,22 @@ public class SQLiteDatabaseGUIInteractorTest {
         int result = dbInteractor.getRowCount("users");
         assertTrue(result >= 0);
         System.out.println("users.rowcount=" + result);
+    }
+
+
+    /**
+     * Test of dropDatabaseObject method, of class SQLiteDatabaseGUIInteractor.
+     */
+    @Test
+    public void testDropDatabaseObject() {
+        System.out.println("dropDatabaseObject");
+        DatabaseTableDTO testTable = new DatabaseTableDTO();
+        testTable.setName("test_table");
+
+        try {
+            dbInteractor.dropDatabaseObject(testTable);
+        } catch (Exception ex) {
+            fail("Couldn't drop table " + testTable.getName() + ": " + ex);
+        }
     }
 }
