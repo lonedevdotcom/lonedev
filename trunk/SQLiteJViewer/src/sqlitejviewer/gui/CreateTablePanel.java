@@ -1,5 +1,8 @@
 package sqlitejviewer.gui;
 
+import javax.swing.DefaultCellEditor;
+import javax.swing.table.TableColumn;
+
 public class CreateTablePanel extends javax.swing.JPanel {
 
     /** Creates new form CreateTablePanel */
@@ -29,17 +32,10 @@ public class CreateTablePanel extends javax.swing.JPanel {
 
         jLabel1.setText("Table Name:");
 
-        columnDefinitionsTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
+        columnDefinitionsTable.setModel(new ColumnDefinitionsTableModel());
+        TableColumn columnType = columnDefinitionsTable.getColumnModel().getColumn(1);
+        ColumnDefinitionsTableModel tableModel = (ColumnDefinitionsTableModel)columnDefinitionsTable.getModel();
+        columnType.setCellEditor(new DefaultCellEditor(tableModel.jcb));
         jScrollPane1.setViewportView(columnDefinitionsTable);
 
         addColumnButton.setText("Add Column");

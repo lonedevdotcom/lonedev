@@ -6,7 +6,7 @@ package sqlitejviewer.datatypes;
  *
  * @author Richard Hawkes
  */
-public class DatabaseDataDTO extends DatabaseObjectDTO {
+public abstract class DatabaseDataDTO extends DatabaseObjectDTO {
     private DatabaseColumnDTO[] columns;
     private int rowCount; // -1 indicates "Unknown"
 
@@ -51,10 +51,5 @@ public class DatabaseDataDTO extends DatabaseObjectDTO {
         }
         
         return output;
-    }
-
-    @Override
-    public String getObjectType() {
-        return "data object";
     }
 }
