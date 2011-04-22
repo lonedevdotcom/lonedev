@@ -1,4 +1,4 @@
-package sqlitejviewer;
+package sqlitejviewer.datatypes;
 
 /**
  * DatabaseColumnDTO's are (at the time of writing) contained within the

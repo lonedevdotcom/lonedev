@@ -1,4 +1,4 @@
-package sqlitejviewer;
+package sqlitejviewer.datatypes;
 
 /**
  * Stub subclass of DatabaseObjectDTO representing a database index.

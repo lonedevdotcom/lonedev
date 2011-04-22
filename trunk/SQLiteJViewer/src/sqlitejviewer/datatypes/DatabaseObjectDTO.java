@@ -1,4 +1,4 @@
-package sqlitejviewer;
+package sqlitejviewer.datatypes;
 
 /**
  * The common component that is contained within SQLite objects (ie tables,

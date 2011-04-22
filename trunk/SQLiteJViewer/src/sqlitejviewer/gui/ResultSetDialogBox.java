@@ -1,4 +1,4 @@
-package sqlitejviewer;
+package sqlitejviewer.gui;
 
 import javax.swing.JFrame;
 import javax.swing.table.AbstractTableModel;
@@ -83,7 +83,7 @@ public class ResultSetDialogBox extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton exportDataButton;
     private javax.swing.JButton refreshDataButton;
-    private sqlitejviewer.ResultSetPanel resultSetPanel;
+    private sqlitejviewer.gui.ResultSetPanel resultSetPanel;
     // End of variables declaration//GEN-END:variables
 
 }
