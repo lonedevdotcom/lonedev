@@ -1,4 +1,4 @@
-package sqlitejviewer;
+package sqlitejviewer.gui;
 
 import javax.swing.table.TableModel;
 

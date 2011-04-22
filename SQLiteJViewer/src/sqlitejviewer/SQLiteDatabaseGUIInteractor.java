@@ -1,5 +1,12 @@
 package sqlitejviewer;
 
+import sqlitejviewer.gui.ResultSetTableModel;
+import sqlitejviewer.datatypes.DatabaseIndexDTO;
+import sqlitejviewer.datatypes.DatabaseObjectDTO;
+import sqlitejviewer.datatypes.DatabaseTableDTO;
+import sqlitejviewer.datatypes.DatabaseTriggerDTO;
+import sqlitejviewer.datatypes.DatabaseColumnDTO;
+import sqlitejviewer.datatypes.DatabaseViewDTO;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;

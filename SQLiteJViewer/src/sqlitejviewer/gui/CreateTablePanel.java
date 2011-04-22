@@ -1,4 +1,4 @@
-package sqlitejviewer;
+package sqlitejviewer.gui;
 
 public class CreateTablePanel extends javax.swing.JPanel {
 

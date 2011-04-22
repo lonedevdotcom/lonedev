@@ -52,7 +52,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="sqlitejviewer.ResultSetPanel" name="resultSetPanel">
+    <Component class="sqlitejviewer.gui.ResultSetPanel" name="resultSetPanel">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new ResultSetPanel(dataObjectName)"/>
       </AuxValues>

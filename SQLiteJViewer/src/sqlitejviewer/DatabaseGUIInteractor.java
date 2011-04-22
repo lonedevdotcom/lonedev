@@ -1,5 +1,10 @@
 package sqlitejviewer;
 
+import sqlitejviewer.datatypes.DatabaseIndexDTO;
+import sqlitejviewer.datatypes.DatabaseObjectDTO;
+import sqlitejviewer.datatypes.DatabaseTableDTO;
+import sqlitejviewer.datatypes.DatabaseTriggerDTO;
+import sqlitejviewer.datatypes.DatabaseViewDTO;
 import java.io.File;
 import javax.swing.table.TableModel;
 

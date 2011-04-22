@@ -1,4 +1,4 @@
-package sqlitejviewer;
+package sqlitejviewer.datatypes;
 
 /**
  * This object is the representation of DabaseObjectDTO's that can return 'data'

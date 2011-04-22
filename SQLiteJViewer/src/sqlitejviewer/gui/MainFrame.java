@@ -1,5 +1,7 @@
-package sqlitejviewer;
+package sqlitejviewer.gui;
 
+import sqlitejviewer.datatypes.DatabaseObjectDTO;
+import sqlitejviewer.datatypes.DatabaseDataDTO;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +14,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import sqlitejviewer.DatabaseGUIInteractor;
+import sqlitejviewer.SQLiteDatabaseGUIInteractor;
 
 /**
  * The main frame! This is the frame that contains the various interaction
@@ -167,7 +171,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jSplitPane1 = new javax.swing.JSplitPane();
-        databaseViewTreePanel = new sqlitejviewer.DatabaseViewTreePanel();
+        databaseViewTreePanel = new sqlitejviewer.gui.DatabaseViewTreePanel();
         databaseObjectDetailsScrollPane = new javax.swing.JScrollPane();
         databaseObjectDetailsTextArea = new javax.swing.JTextArea();
         menuBar = new javax.swing.JMenuBar();
@@ -302,7 +306,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenu databaseMenu;
     private javax.swing.JScrollPane databaseObjectDetailsScrollPane;
     private javax.swing.JTextArea databaseObjectDetailsTextArea;
-    private sqlitejviewer.DatabaseViewTreePanel databaseViewTreePanel;
+    private sqlitejviewer.gui.DatabaseViewTreePanel databaseViewTreePanel;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JPopupMenu.Separator jSeparator1;
