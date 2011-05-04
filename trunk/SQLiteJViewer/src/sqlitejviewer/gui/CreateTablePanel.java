@@ -1,6 +1,7 @@
 package sqlitejviewer.gui;
 
 import javax.swing.DefaultCellEditor;
+import javax.swing.JDialog;
 import javax.swing.table.TableColumn;
 
 public class CreateTablePanel extends javax.swing.JPanel {
@@ -32,7 +33,14 @@ public class CreateTablePanel extends javax.swing.JPanel {
 
         jLabel1.setText("Table Name:");
 
+        tableNameTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                tableNameTextFieldKeyTyped(evt);
+            }
+        });
+
         columnDefinitionsTable.setModel(new ColumnDefinitionsTableModel());
+        columnDefinitionsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         TableColumn columnType = columnDefinitionsTable.getColumnModel().getColumn(1);
         ColumnDefinitionsTableModel tableModel = (ColumnDefinitionsTableModel)columnDefinitionsTable.getModel();
         columnType.setCellEditor(new DefaultCellEditor(tableModel.jcb));
@@ -58,6 +66,11 @@ public class CreateTablePanel extends javax.swing.JPanel {
         columnDownButton.setEnabled(false);
 
         cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -111,9 +124,26 @@ public class CreateTablePanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void maybeEnableCreateTableButton() {
+        if (tableNameTextField.getText().length() == 0) {
+            createTableButton.setEnabled(false);
+            return;
+        } else {
+            createTableButton.setEnabled(true);
+        }
+    }
+
     private void removeColumnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeColumnButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_removeColumnButtonActionPerformed
+
+    private void tableNameTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableNameTextFieldKeyTyped
+        maybeEnableCreateTableButton();
+    }//GEN-LAST:event_tableNameTextFieldKeyTyped
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        // TODO: Get the cancel working!
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
