@@ -1,24 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * DeleteMeCreateTableTest.java
- *
- * Created on 22-Apr-2011, 20:53:45
- */
-
 package sqlitejviewer.gui;
 
-/**
- *
- * @author Richard
- */
-public class DeleteMeCreateTableTest extends javax.swing.JFrame {
+public class CreateTableDialog extends javax.swing.JDialog {
 
-    /** Creates new form DeleteMeCreateTableTest */
-    public DeleteMeCreateTableTest() {
+    /** Creates new form CreateTableDialog */
+    public CreateTableDialog(java.awt.Frame parent) {
+        super(parent, true);
         initComponents();
     }
 
@@ -33,32 +19,23 @@ public class DeleteMeCreateTableTest extends javax.swing.JFrame {
 
         createTablePanel1 = new sqlitejviewer.gui.CreateTablePanel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Create Table");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(createTablePanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)
+            .addComponent(createTablePanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(createTablePanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)
+            .addComponent(createTablePanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-    * @param args the command line arguments
-    */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new DeleteMeCreateTableTest().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private sqlitejviewer.gui.CreateTablePanel createTablePanel1;
