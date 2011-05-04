@@ -54,7 +54,12 @@ public class ColumnDefinitionsTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object value, int row, int col) {
         switch (col) {
-            case 0: columnDefinitions.get(row).setColumnName(value.toString()); break;
+            case 0:
+                // Don't let the user enter an empty string.
+                if (value.toString().length() > 0) {
+                    columnDefinitions.get(row).setColumnName(value.toString());
+                }
+                break;
             case 1: columnDefinitions.get(row).setColumnDataType(value.toString()); break;
             case 2: columnDefinitions.get(row).setDefaultValue(value.toString()); break;
         }

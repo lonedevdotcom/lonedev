@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -20,8 +21,8 @@ import sqlitejviewer.SQLiteDatabaseGUIInteractor;
 /**
  * The main frame! This is the frame that contains the various interaction
  * panels and listeners. It also has a static reference to the
- * DatabaseGUIInteractor instance. This if convenience to avoid having to pass
- * it around between all of the various panels. 
+ * DatabaseGUIInteractor instance. This is for convenience to avoid having to
+ * pass it around between all of the various panels.
  *
  * @author Richard Hawkes
  */
@@ -58,7 +59,6 @@ public class MainFrame extends javax.swing.JFrame {
      * up a popup menu.
      */
     private class DatabaseTreePopupMenuHandler extends MouseAdapter {
-        JPopupMenu databasePopupMenu = new JPopupMenu();
         JPopupMenu databaseObjectPopupMenu = new JPopupMenu();
 
         public DatabaseTreePopupMenuHandler() {
@@ -95,17 +95,6 @@ public class MainFrame extends javax.swing.JFrame {
                     }
                 }
             });
-
-            JMenuItem dumpSchemaMenuItem = new JMenuItem("Dump Schema");
-            databasePopupMenu.add(dumpSchemaMenuItem);
-            dumpSchemaMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    if (MainFrame.dbInteractor != null) {
-                        String dumpResults = MainFrame.dbInteractor.dumpDatabase();
-                        databaseObjectDetailsTextArea.setText(dumpResults);
-                    }
-                }
-            });
         }
 
         @Override
@@ -126,14 +115,12 @@ public class MainFrame extends javax.swing.JFrame {
             if (! undergoingRefresh) {
                 // Firstly, the user may have right-clicked over a node that wasn't
                 // selected, we should select the node over which they are right-
-                // clicking.
+                // clicking. Otherwise the user experience is a bit odd.
                 int row = databaseViewTreePanel.getDatabaseViewTree().getRowForLocation(me.getX(), me.getY());
                 if (row >= 0) {
                     databaseViewTreePanel.getDatabaseViewTree().setSelectionRow(row);
 
-                    if (databaseViewTreePanel.getSelectedNodesUserObject().toString().equals("Database")) {
-                        databasePopupMenu.show(me.getComponent(), me.getX(), me.getY());
-                    } else if (databaseViewTreePanel.getSelectedNodesUserObject() instanceof DatabaseObjectDTO) {
+                    if (databaseViewTreePanel.getSelectedNodesUserObject() instanceof DatabaseObjectDTO) {
                         // Display the "View Data" popup only if this is a
                         // DatabaseDataDTO instance (ie it has data to view!)
                         Component viewDataMenuItem = databaseObjectPopupMenu.getComponent(0); // 0 is the first entry (ie View Data)
@@ -179,9 +166,12 @@ public class MainFrame extends javax.swing.JFrame {
         openDatabaseMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         exitMenuItem = new javax.swing.JMenuItem();
-        databaseMenu = new javax.swing.JMenu();
+        viewMenu = new javax.swing.JMenu();
         showRowCountCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         refreshDatabaseMenuItem = new javax.swing.JMenuItem();
+        databaseMenu = new javax.swing.JMenu();
+        createTableMenuItem = new javax.swing.JMenuItem();
+        dumpSchemaMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -220,7 +210,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         menuBar.add(fileMenu);
 
-        databaseMenu.setText("Database");
+        viewMenu.setText("View");
 
         showRowCountCheckBoxMenuItem.setText("Show Row Count");
         showRowCountCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -228,7 +218,7 @@ public class MainFrame extends javax.swing.JFrame {
                 showRowCountCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        databaseMenu.add(showRowCountCheckBoxMenuItem);
+        viewMenu.add(showRowCountCheckBoxMenuItem);
 
         refreshDatabaseMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
         refreshDatabaseMenuItem.setText("Refresh");
@@ -237,7 +227,27 @@ public class MainFrame extends javax.swing.JFrame {
                 refreshDatabaseMenuItemActionPerformed(evt);
             }
         });
-        databaseMenu.add(refreshDatabaseMenuItem);
+        viewMenu.add(refreshDatabaseMenuItem);
+
+        menuBar.add(viewMenu);
+
+        databaseMenu.setText("Database");
+
+        createTableMenuItem.setText("Create Table");
+        createTableMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createTableMenuItemActionPerformed(evt);
+            }
+        });
+        databaseMenu.add(createTableMenuItem);
+
+        dumpSchemaMenuItem.setText("Dump Schema");
+        dumpSchemaMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dumpSchemaMenuItemActionPerformed(evt);
+            }
+        });
+        databaseMenu.add(dumpSchemaMenuItem);
 
         menuBar.add(databaseMenu);
 
@@ -288,6 +298,20 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_showRowCountCheckBoxMenuItemActionPerformed
 
+    private void dumpSchemaMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dumpSchemaMenuItemActionPerformed
+        if (MainFrame.dbInteractor != null) {
+            String dumpResults = MainFrame.dbInteractor.dumpDatabase();
+            databaseObjectDetailsTextArea.setText(dumpResults);
+        }
+    }//GEN-LAST:event_dumpSchemaMenuItemActionPerformed
+
+    private void createTableMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createTableMenuItemActionPerformed
+        if (MainFrame.dbInteractor != null) {
+            JDialog createTableDialog = new CreateTableDialog(this);
+            createTableDialog.setVisible(true);
+        }
+    }//GEN-LAST:event_createTableMenuItemActionPerformed
+
     private void loadDatabaseFile(File databaseFile) {
         undergoingRefresh = true;
         
@@ -303,10 +327,12 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem createTableMenuItem;
     private javax.swing.JMenu databaseMenu;
     private javax.swing.JScrollPane databaseObjectDetailsScrollPane;
     private javax.swing.JTextArea databaseObjectDetailsTextArea;
     private sqlitejviewer.gui.DatabaseViewTreePanel databaseViewTreePanel;
+    private javax.swing.JMenuItem dumpSchemaMenuItem;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JPopupMenu.Separator jSeparator1;
@@ -315,6 +341,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem openDatabaseMenuItem;
     private javax.swing.JMenuItem refreshDatabaseMenuItem;
     private javax.swing.JCheckBoxMenuItem showRowCountCheckBoxMenuItem;
+    private javax.swing.JMenu viewMenu;
     // End of variables declaration//GEN-END:variables
 
 }
