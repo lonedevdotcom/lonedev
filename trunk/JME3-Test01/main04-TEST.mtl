@@ -1,0 +1,14 @@
+# Blender MTL File: 'main04-TEST.blend'
+# Material Count: 1
+newmtl Material_diffuse.png
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.219059 0.008611 0.005822
+Ks 0.022318 0.022318 0.022318
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\Richard\Documents\Blender\low poly modelling series\main04-TEST.blend\diffuse.png
+map_Bump C:\\Users\\Richard\\Documents\\Blender\\low poly modelling series\\main04-TEST.blend\\low_poly_normal.png
+
+

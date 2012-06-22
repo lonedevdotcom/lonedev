@@ -1,0 +1,15 @@
+Tower AI
+
+Do I have a target?
+    Yes
+        Is it in range and does it have some health left?
+            Yes
+                Fire at it!
+            No
+                reset and look for new target
+    No
+        Find a target (some AI needed here to pick "best" target...)
+        Rotate to it (if at any time it goes out of range again, then reset and look again!)
+
+and repeat...
+        
