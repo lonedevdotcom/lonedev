@@ -1,0 +1,34 @@
+TO-DO
+Coding:
+	Projectile firing
+	Explosions on impact
+	Fade out of enemy target as they explode
+	Add "external" terrain
+	Make internal terrain more bumpy
+	Create level and wave mechanism
+	Camera angle. Find ideal height, and get rotation mechanism working
+	How to add new towers
+	Handling waves
+	Handling levels
+	Scoring mechanism
+	
+Menus
+	Start Menu
+	How to transfter between start state and game state
+	Pause Menu
+	HUD. How do you rotate?
+	
+Assets
+	Enemies
+		Cheese 1
+		Cheese 2?
+	Towers
+		Cannon
+		Machine Gun
+		Mine
+	Scenery
+		Ground Terrain
+		External Terrain
+		Skybox
+		
+	
