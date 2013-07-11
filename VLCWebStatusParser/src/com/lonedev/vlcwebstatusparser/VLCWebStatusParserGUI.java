@@ -4,8 +4,17 @@
  */
 package com.lonedev.vlcwebstatusparser;
 
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Frame;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.io.File;
-import javax.swing.JDialog;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Properties;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -15,12 +24,14 @@ import javax.swing.JOptionPane;
  */
 public class VLCWebStatusParserGUI extends javax.swing.JFrame implements FileUpdaterErrorHandler {
     private Thread fileUpdaterThread;
+    private static final String CONFIG_SAVE_PATH = System.getProperty("user.home") + "/vlcwsp.props";
     
     /**
      * Creates new form VLCWebStatusParserGUI
      */
     public VLCWebStatusParserGUI() {
         initComponents();
+        reloadPreviousSettingsFromConfigFile();
     }
 
     /**
@@ -62,6 +73,7 @@ public class VLCWebStatusParserGUI extends javax.swing.JFrame implements FileUpd
         jLabel2.setText("Refresh Frequency:");
 
         refreshFrequenctComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0.5 seconds", "1 second", "2 seconds", "3 seconds", "4 seconds", "5 seconds", "10 seconds", "15 seconds", "20 seconds", "30 seconds", "60 seconds" }));
+        refreshFrequenctComboBox.setSelectedItem("2 seconds");
         refreshFrequenctComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 refreshFrequenctComboBoxActionPerformed(evt);
@@ -194,8 +206,31 @@ public class VLCWebStatusParserGUI extends javax.swing.JFrame implements FileUpd
         stopPollingButton.setEnabled(true);
         statusLabel.setText("Started...");
         setFieldsEnabled(false);
-        fileUpdaterThread.start();        
+        fileUpdaterThread.start();
+        
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                saveSettings();
+            }
+        });
     }//GEN-LAST:event_startPollingButtonActionPerformed
+    
+    private void saveSettings() {
+        Properties props = new Properties();
+        props.put("webUrl", webUrlTextField.getText());
+        props.put("refreshFrequency", refreshFrequenctComboBox.getSelectedItem().toString());
+        props.put("outputFormat", outputFormatTextField.getText());
+        props.put("outputFile", outputFileTextField.getText());
+        
+        try {
+//            System.out.println("Saving config to " + CONFIG_SAVE_PATH);
+            OutputStream propsOutputStream = new FileOutputStream(CONFIG_SAVE_PATH);
+            props.store(propsOutputStream, "VLC Web Parser properties");
+            propsOutputStream.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
     private void stopPollingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopPollingButtonActionPerformed
         if (fileUpdaterThread != null) {
@@ -256,13 +291,18 @@ public class VLCWebStatusParserGUI extends javax.swing.JFrame implements FileUpd
             java.util.logging.Logger.getLogger(VLCWebStatusParserGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new VLCWebStatusParserGUI().setVisible(true);
-            }
-        });
+        
+        Frame f = new VLCWebStatusParserGUI();
+        f.pack();
+        centreWindow(f);
+        f.setVisible(true);
+    }
+    
+    public static void centreWindow(Window frame) {
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
+        int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
+        frame.setLocation(x, y);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
@@ -286,5 +326,23 @@ public class VLCWebStatusParserGUI extends javax.swing.JFrame implements FileUpd
         this.startPollingButton.setEnabled(true);
         this.stopPollingButton.setEnabled(false);
         setFieldsEnabled(true);
+    }
+
+    private void reloadPreviousSettingsFromConfigFile() {
+        File configFile = new File(CONFIG_SAVE_PATH);
+        if (configFile.exists()) {
+            try {
+                InputStream configFileInputStream = new FileInputStream(configFile);
+                Properties props = new Properties();
+                props.load(configFileInputStream);
+                webUrlTextField.setText(props.getProperty("webUrl"));
+                refreshFrequenctComboBox.setSelectedItem(props.getProperty("refreshFrequency"));
+                outputFormatTextField.setText(props.getProperty("outputFormat"));
+                outputFileTextField.setText(props.getProperty("outputFile"));
+                configFileInputStream.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 }

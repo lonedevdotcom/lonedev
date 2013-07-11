@@ -2,12 +2,17 @@ package com.lonedev.vlcwebstatusparser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This class handles the checking of the VLC web URL and updating a file with
+ * the details of the next song/track.
+ * 
+ * @author Richard Hawkes
+ */
 public class FileUpdaterThread extends Thread {
     private String webUrl;
     private int refreshDelay;
@@ -39,14 +44,15 @@ public class FileUpdaterThread extends Thread {
                 String state = metaDataHandlerProperties.getProperty("state");
                 
                 if (!state.equalsIgnoreCase("playing") && !state.equals(currentState)) {
+                    // If we're here it's because the Web URL is telling us it's paused or stopped.
                     writeNewDetailsToFile(state.toUpperCase());
                     currentTitle = "";
-                    currentState = state;
+                    currentState = state; // Update the current state to paused/stopped so the file only gets updated when the state changes.
                 } else if (title != null && !title.equals(currentTitle) && state.equalsIgnoreCase("playing")) {
                     String outputText = getReformattedOutputText(metaDataHandlerProperties);
                     writeNewDetailsToFile(outputText);
-                    currentTitle = title;
-                    currentState = state;
+                    currentTitle = title; // Update the current title with the new song/track so the file will only get updated again when the title changes.
+                    currentState = state; // Not actually sure if this is needed now.
                 }
                 
                 try { Thread.sleep(refreshDelay); } catch (Exception ex) { }
