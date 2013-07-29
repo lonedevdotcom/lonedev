@@ -3,6 +3,9 @@ package com.lonedev.vlcwebstatusparser;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,15 +22,17 @@ public class FileUpdaterThread extends Thread {
     private String outputFormat;
     private File outputFile;
     private boolean keepRunning = true;
+    private boolean copyAlbumArt = false;
     private FileUpdaterErrorHandler errorHandler;
     
 
-    public FileUpdaterThread(String webUrl, int refreshDelay, String outputFormat, File outputFile, FileUpdaterErrorHandler errorHandler) {
+    public FileUpdaterThread(String webUrl, int refreshDelay, String outputFormat, File outputFile, FileUpdaterErrorHandler errorHandler, boolean copyAlbumArt) {
         setWebUrl(webUrl);
         setRefreshDelay(refreshDelay);
         setOutputFormat(outputFormat);
         setOutputFile(outputFile);
         setErrorHandler(errorHandler);
+        setCopyAlbumArt(copyAlbumArt);
     }
     
     @Override
@@ -42,6 +47,7 @@ public class FileUpdaterThread extends Thread {
                 Properties metaDataHandlerProperties = metaHandler.getMetaProperties();
                 String title = metaDataHandlerProperties.getProperty("title");
                 String state = metaDataHandlerProperties.getProperty("state");
+                String albumArtUrl = metaDataHandlerProperties.getProperty("artwork_url");
                 
                 if (!state.equalsIgnoreCase("playing") && !state.equals(currentState)) {
                     // If we're here it's because the Web URL is telling us it's paused or stopped.
@@ -51,6 +57,7 @@ public class FileUpdaterThread extends Thread {
                 } else if (title != null && !title.equals(currentTitle) && state.equalsIgnoreCase("playing")) {
                     String outputText = getReformattedOutputText(metaDataHandlerProperties);
                     writeNewDetailsToFile(outputText);
+                    maybeCopyArtwork(albumArtUrl);
                     currentTitle = title; // Update the current title with the new song/track so the file will only get updated again when the title changes.
                     currentState = state; // Not actually sure if this is needed now.
                 }
@@ -158,5 +165,29 @@ public class FileUpdaterThread extends Thread {
         PrintWriter out = new PrintWriter(outputFile);
         out.println(outputText);
         out.close();
+    }
+
+    /**
+     * @return the copyAlbumArt
+     */
+    public boolean isCopyAlbumArt() {
+        return copyAlbumArt;
+    }
+
+    /**
+     * @param copyAlbumArt the copyAlbumArt to set
+     */
+    public void setCopyAlbumArt(boolean copyAlbumArt) {
+        this.copyAlbumArt = copyAlbumArt;
+    }
+
+    private void maybeCopyArtwork(String albumArtUrl) throws MalformedURLException, URISyntaxException {
+        if (isCopyAlbumArt() && albumArtUrl != null) {
+            File albumArt = new File(new URL(albumArtUrl).toURI());
+            if (albumArt.exists()) {
+                String copyToDir = getOutputFile().getParent();
+                // TODO - The art should be copied to the same folder as the output file.
+            }
+        }
     }
 }

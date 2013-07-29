@@ -56,6 +56,7 @@ public class VLCWebStatusParserGUI extends javax.swing.JFrame implements FileUpd
         statusLabel = new javax.swing.JLabel();
         startPollingButton = new javax.swing.JButton();
         stopPollingButton = new javax.swing.JButton();
+        copyAlbumArtCheckBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("VLC Web Status Updater");
@@ -120,15 +121,23 @@ public class VLCWebStatusParserGUI extends javax.swing.JFrame implements FileUpd
             }
         });
 
+        copyAlbumArtCheckBox.setText("Copy album art image (if any) to same folder as output file.");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(statusLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
+                .addComponent(startPollingButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(stopPollingButton)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(copyAlbumArtCheckBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -145,12 +154,7 @@ public class VLCWebStatusParserGUI extends javax.swing.JFrame implements FileUpd
                                     .addComponent(outputFileChooserButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(outputFormatHelpButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addComponent(refreshFrequenctComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(webUrlTextField)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(startPollingButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(stopPollingButton)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addComponent(webUrlTextField))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -174,11 +178,13 @@ public class VLCWebStatusParserGUI extends javax.swing.JFrame implements FileUpd
                     .addComponent(jLabel4)
                     .addComponent(outputFileTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(outputFileChooserButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(copyAlbumArtCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(startPollingButton)
                     .addComponent(stopPollingButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusLabel))
         );
 
@@ -201,7 +207,7 @@ public class VLCWebStatusParserGUI extends javax.swing.JFrame implements FileUpd
         
         double refreshInterval = Double.parseDouble(refreshFrequenctComboBox.getSelectedItem().toString().split(" ")[0]) * 1000;
         
-        fileUpdaterThread = new FileUpdaterThread(webUrlTextField.getText(), (int)refreshInterval, outputFormatTextField.getText(), new File(outputFileTextField.getText()), this);
+        fileUpdaterThread = new FileUpdaterThread(webUrlTextField.getText(), (int)refreshInterval, outputFormatTextField.getText(), new File(outputFileTextField.getText()), this, copyAlbumArtCheckBox.isSelected());
         startPollingButton.setEnabled(false);
         stopPollingButton.setEnabled(true);
         statusLabel.setText("Started...");
@@ -221,6 +227,7 @@ public class VLCWebStatusParserGUI extends javax.swing.JFrame implements FileUpd
         props.put("refreshFrequency", refreshFrequenctComboBox.getSelectedItem().toString());
         props.put("outputFormat", outputFormatTextField.getText());
         props.put("outputFile", outputFileTextField.getText());
+        props.put("copyAlbumArt", Boolean.toString(copyAlbumArtCheckBox.isSelected()));
         
         try {
 //            System.out.println("Saving config to " + CONFIG_SAVE_PATH);
@@ -305,6 +312,7 @@ public class VLCWebStatusParserGUI extends javax.swing.JFrame implements FileUpd
         frame.setLocation(x, y);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox copyAlbumArtCheckBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -335,10 +343,26 @@ public class VLCWebStatusParserGUI extends javax.swing.JFrame implements FileUpd
                 InputStream configFileInputStream = new FileInputStream(configFile);
                 Properties props = new Properties();
                 props.load(configFileInputStream);
-                webUrlTextField.setText(props.getProperty("webUrl"));
-                refreshFrequenctComboBox.setSelectedItem(props.getProperty("refreshFrequency"));
-                outputFormatTextField.setText(props.getProperty("outputFormat"));
-                outputFileTextField.setText(props.getProperty("outputFile"));
+                if (props.getProperty("webUrl") != null) {
+                    webUrlTextField.setText(props.getProperty("webUrl"));
+                }
+                
+                if (props.getProperty("refreshFrequency") != null) {
+                    refreshFrequenctComboBox.setSelectedItem(props.getProperty("refreshFrequency"));
+                }
+                
+                if (props.getProperty("outputFormat") != null) {
+                    outputFormatTextField.setText(props.getProperty("outputFormat"));
+                }
+                
+                if (props.getProperty("outputFile") != null) {
+                    outputFileTextField.setText(props.getProperty("outputFile"));
+                }
+                
+                if (props.getProperty("copyAlbumArt") != null) {
+                    copyAlbumArtCheckBox.setSelected(props.getProperty("copyAlbumArt").toString().equalsIgnoreCase("true"));
+                }
+                
                 configFileInputStream.close();
             } catch (Exception ex) {
                 ex.printStackTrace();
