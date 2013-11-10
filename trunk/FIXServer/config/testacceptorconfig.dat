@@ -1,0 +1,16 @@
+# default settings for sessions
+[DEFAULT]
+ConnectionType=acceptor
+ReconnectInterval=60
+SocketAcceptPort=8323
+SenderCompID=MRGNSTNLY
+FileLogPath=C:/Temp/MRGNSTNLY
+FileStorePath=C:/Temp/MRGNSTNLY
+
+[SESSION]
+BeginString=FIX.4.2
+TargetCompID=LONEDEV
+StartTime=00:00:00
+EndTime=23:00:00
+HeartBtInt=30
+DataDictionary=c:/dev/quickfixj/etc/FIX42.xml

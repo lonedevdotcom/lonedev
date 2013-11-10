@@ -1,0 +1,17 @@
+# default settings for sessions
+[DEFAULT]
+ConnectionType=initiator
+ReconnectInterval=60
+SenderCompID=LONEDEV
+FileLogPath=C:/Temp/LONEDEV
+FileStorePath=C:/Temp/LONEDEV
+
+[SESSION]
+BeginString=FIX.4.2
+TargetCompID=MRGNSTNLY
+StartTime=00:00:00
+EndTime=23:00:00
+HeartBtInt=30
+SocketConnectPort=8323
+SocketConnectHost=localhost
+DataDictionary=c:/dev/quickfixj/etc/FIX42.xml
