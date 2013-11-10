@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+       <bean id="mqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+           <constructor-arg value="tcp://localhost:61616"/>
+       </bean>
+       
+       <!--
+       <bean id="orderLoader" class="orderloader.ApacheMQOrderLoader" init-method="init">
+           <property name="connectionFactory" ref="mqConnectionFactory"/>
+           <property name="orderQueueName" value="test.orders.in"/>
+       </bean>
+       -->
+       
+       <bean id="fixServer" class="com.lonedev.fixserver.quickfix.QuickFIXServer">
+           <property name="configFilename" value="config/fixconfig.dat" />
+       </bean>
+       
+       <bean id="upstreamRequestHandler" class="com.lonedev.fixserver.upstream.JMSUpstreamRequestHandler">
+           <property name="fixServer" ref="fixServer"/>
+           <property name="jmsConnectionFactory" ref="mqConnectionFactory"/>
+       </bean>
+
+</beans>
