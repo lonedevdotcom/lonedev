@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+    xmlns="http://www.springframework.org/schema/beans" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:util="http://www.springframework.org/schema/util" 
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+
+    <util:list id="fixSessionsList">
+        <!-- DEFAULT values always go first -->
+        <props>
+            <prop key="ConnectionType">initiator</prop>
+            <!-- <prop key="ReconnectInterval">30</prop> -->
+            <prop key="SenderCompID">LD</prop>
+            <prop key="FileLogPath">c:\temp\ld</prop>
+            <prop key="FileStorePath">c:\temp\ld</prop>                
+        </props>
+
+        <props>
+            <prop key="BeginString">FIX.4.4</prop>
+            <prop key="TargetCompID">LDA</prop>
+            <prop key="StartTime">06:00:00</prop>
+            <prop key="EndTime">23:00:00</prop>
+            <!-- <prop key="ResetOnLogon">Y</prop> -->
+            <prop key="SocketConnectPort">5001</prop>
+            <prop key="SocketConnectHost">localhost</prop>
+            <prop key="HeartBtInt">30</prop>
+            <prop key="DataDictionary">C:\dev\quickfixj\etc\FIX44.xml</prop>
+        </props>
+    </util:list>
+    
+    <bean id="quickFIXApplication" class="com.lonedev.fixserver.DefaultQuickFIXApplication">
+        <property name="newExternalFIXMessageHandler" ref="newExternalFIXMessageHandler"/>
+    </bean>
+    
+    <bean id="newExternalFIXMessageHandler" class="com.lonedev.fixserver.JMSNewExternalFIXMessageHandler" init-method="init">
+        <property name="jmsConnectionFactory" ref="jmsConnectionFactory"/>
+        <property name="messageQueueOut" value="quickfix.out"/>
+    </bean>
+    
+    <bean id="newInternalFIXMessageHandler" class="com.lonedev.fixserver.JMSNewInternalFIXMessageHandler" init-method="init">
+        <property name="jmsConnectionFactory" ref="jmsConnectionFactory"/>
+        <property name="messageQueueIn" value="quickfix.in"/>
+    </bean>
+    
+    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="tcp://localhost:61616" />
+    </bean>
+    
+    
+    <bean id="fixInitiator" class="quickfix.SocketInitiator">
+        <constructor-arg ref="quickFIXApplication"/>
+        <constructor-arg ref="fixMessageStoreFactory"/>
+        <constructor-arg ref="fixSessionSettings"/>
+        <constructor-arg ref="fixLogFactory"/>
+        <constructor-arg ref="fixMessageFactory"/>
+    </bean>
+    
+    <bean id="fixMessageFactory" class="quickfix.DefaultMessageFactory"/>
+    
+    <bean id="fixLogFactory" class="quickfix.FileLogFactory">
+        <constructor-arg ref="fixSessionSettings"/>
+    </bean>
+
+    <bean id="fixMessageStoreFactory" class="quickfix.FileStoreFactory">
+        <constructor-arg ref="fixSessionSettings"/>
+    </bean>
+    
+    <bean id="fixSessionSettings" class="quickfix.SessionSettings">
+        <constructor-arg ref="springFIXInputStream"/>
+    </bean>
+    
+    <bean id="springFIXInputStream" class="com.lonedev.fixserver.SpringFIXSessionInputStream">
+        <constructor-arg ref="fixSessionsList"/>
+    </bean>
+    
+</beans>
